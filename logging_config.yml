@@ -1,0 +1,42 @@
+version: 1
+disable_existing_loggers: False
+
+
+formatters:
+  console:
+    format: "%(asctime)s %(name)s %(levelname)s:\t%(message)s"
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  logfile:
+    format: "%(asctime)s %(name)s %(levelname)s:\t%(funcName)s:%(lineno)s\t%(message)s"
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: console
+    stream: ext://sys.stdout
+  logfile:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: logfile
+    filename: FluQC.log
+    mode: w
+
+loggers:
+  FluQC:
+    level: DEBUG
+    handlers: [console, logfile]
+    propagate: no
+  Analysis:
+    level: DEBUG
+    handlers: [console, logfile]
+    propagate: no
+  Dashboard:
+    level: INFO
+    handlers: [console]
+    propagate: no
+
+root:
+  level: DEBUG
+  handlers: [console]

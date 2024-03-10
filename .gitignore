@@ -1,0 +1,10 @@
+*__pycache__*
+db/
+testrun/
+avans_data/
+datasets/
+db/
+tmp.py 
+reads2contigs.py
+testdata/
+*.log
