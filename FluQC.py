@@ -27,10 +27,10 @@ class Dashboard():
             for segment in data.segments:
                 # add data to df
                 d[segment.split('_')[1]].append(data.covstats.loc[segment, value])
-        # if length of a key in d is less than len(d[sample]), append 0
-        for key in list(d.keys())[1:]:
-            if len(d[key]) < len(d['sample']):
-                d[key].append(0)
+            # if length of a key in d is less than len(d[sample]), append 0
+            for key in list(d.keys())[1:]:
+                if len(d[key]) < len(d['sample']):
+                    d[key].append(0)
         df = pd.DataFrame(d)
         df = df.set_index('sample')
         print(df)
