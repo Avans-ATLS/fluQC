@@ -31,8 +31,10 @@ class Dashboard():
                     d[key].append(0)
         df = pd.DataFrame(d)
         df = df.set_index('sample')
-        print(df)
-        return px.imshow(df, text_auto=True)
+        df = df.transpose() 
+        fig = px.imshow(df, text_auto=True)
+        fig.update_xaxes(categoryorder='category ascending')
+        return fig
     
     
     @callback(Output("heatmap", "figure"), Input("statistic", "value"))
@@ -54,8 +56,10 @@ class Dashboard():
                     d[key].append(0)
         df = pd.DataFrame(d)
         df = df.set_index('sample')
-        print(df)
-        return px.imshow(df, text_auto=True)
+        df = df.transpose()
+        fig = px.imshow(df, text_auto=True)
+        fig.update_xaxes(categoryorder='category ascending')
+        return fig
 
     @callback(Output("segment-lengths", "figure"), Input("sample", "value"))
     def plot_segment_lengths(value: str) -> Figure:
@@ -85,8 +89,6 @@ class Dashboard():
             dcc.Graph(id="segment-lengths"),
         ]
     )
-        # self.create_depth_heatmap_data()
-        # self.plot_percent_dip()
         app.run(debug=True)
 
 

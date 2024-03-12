@@ -3,8 +3,7 @@ db/
 testrun/
 avans_data/
 datasets/
-db/
-tmp.py 
-reads2contigs.py
+test/
 testdata/
 *.log
+tmp*
