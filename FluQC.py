@@ -14,6 +14,27 @@ from analysis import Analysis
 
 class Dashboard():
     segments = ['HA', 'NA', 'PB1', 'PB2', 'MP', 'NP', 'PA', 'NS']
+    
+    def plot_percent_dip(self):
+        d = dict(
+        sample = [],
+        HA=[], NA=[], PB1=[], PB2=[], MP=[], NP=[], PA=[], NS=[]
+        )
+        # combine results into dataframe
+        for sample, data in results.items():
+            d['sample'].append(sample)
+            for k, v in data.percent_dip.items():
+                d[k.split('_')[1]].append(v)
+             # if length of a key in d is less than len(d[sample]), append 0
+            for key in list(d.keys())[1:]:
+                if len(d[key]) < len(d['sample']):
+                    d[key].append(0)
+        df = pd.DataFrame(d)
+        df = df.set_index('sample')
+        print(df)
+        return px.imshow(df, text_auto=True)
+    
+    
     @callback(Output("heatmap", "figure"), Input("statistic", "value"))
     def create_depth_heatmap_data(value):
         d = dict(
@@ -53,6 +74,8 @@ class Dashboard():
         app.layout = html.Div(
         [
             html.H1(children="FluQC dashboard", style={"textAlign": "center"}),
+            html.H3(children='Heatmap of percentage putative DIPs'),
+            dcc.Graph(figure=self.plot_percent_dip()),
             html.H2(children='Choose sample to show results:'),
             dcc.Dropdown(['coverage', 'numreads', 'covbases', 'meanbaseq', 'meanmapq', 'meandepth'], 'meandepth', id='statistic'),
             html.H3(children="Heatmap of samtools coverage stats"),
@@ -63,6 +86,7 @@ class Dashboard():
         ]
     )
         # self.create_depth_heatmap_data()
+        # self.plot_percent_dip()
         app.run(debug=True)
 
 

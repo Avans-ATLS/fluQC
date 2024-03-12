@@ -15,6 +15,7 @@ class Analysis:
     MIXED_THRESHOLD: float = (
         0.2  # min fraction of second most abundant segment to be considered mixed
     )
+    DIP_THRESHOLD: int = 2 # Ratio at above which a read is considered putative DIP
     HA_MIXED: bool = False
     NA_MIXED: bool = False
     l: Logger = logging.getLogger("Analysis")
@@ -35,17 +36,39 @@ class Analysis:
             os.makedirs(self.outdir)
 
         self.l.info(f"Running analysis for {self.samplename}")
-        paf = self.minimap2()
-        self.segments, self.assignments = self.assign_reads(paf)
+        self.paf = self.minimap2()
+        self.segments, self.assignments = self.assign_reads(self.paf)
         self.type: str = self.typing(self.segments)
         self.segment_readlengths: dict = self.length_per_segment()
         self.covstats: DataFrame = self.samtools_cov()
         self.depth: DataFrame = self.samtools_depth()
 
+        self.l.info(f"Computing ratio of DIPs")
+        
+        self.percent_dip = {
+            s: self.count_dips(s) for s in self.segments
+        }
+        
         self.l.info(f"Finished analysis of {self.samplename}, subtype: {self.type}")
         self.l.info(f"HA_mixed: {self.HA_MIXED}")
         self.l.info(f"NA_mixed: {self.NA_MIXED}")
+        
 
+    def count_dips(self, segment) -> float:
+        # subset paf on current segment
+        df = self.paf[self.paf['t_name'] == segment]
+        # grab number of unique reads in subset
+        n_reads = len(df['q_name'].unique())
+        # compute alignment ratio (length of target / alignment length)
+        df['aln_ratio'] = df.apply(lambda row: row['t_len'] / row['aln_len'], axis=1)
+        # grab count reads where alignment ratio > 2
+        n_dip = len(df[df['aln_ratio'] > 2]['q_name'].unique())
+        
+        # return percentage putative DIP
+        return (n_dip / n_reads) * 100
+        
+        
+    
     def minimap2(self) -> DataFrame:
         """Map fastq reads against IRMA database
         Output a DataFrame of the PAF results from minimap2
@@ -114,6 +137,8 @@ class Analysis:
             df["q_end"] = df["q_end"].astype(int)
             df["q_start"] = df["q_start"].astype(int)
             df["n_match"] = df["n_match"].astype(int)
+            df["t_len"] = df["t_len"].astype(int)
+            df["aln_len"] = df["aln_len"].astype(int)
             return df
 
     def assign_read(self, df: DataFrame, read: str) -> tuple:
