@@ -55,6 +55,14 @@ class Analysis:
         
 
     def count_dips(self, segment) -> float:
+        """Compute percentage of putative DIP reads in segment
+
+        Args:
+            segment (str): Segment to compute DIPs in
+
+        Returns:
+            float: Percentage putative DIPs
+        """
         # subset paf on current segment
         df = self.paf[self.paf['t_name'] == segment]
         # grab number of unique reads in subset
@@ -141,7 +149,7 @@ class Analysis:
             df["aln_len"] = df["aln_len"].astype(int)
             return df
 
-    def assign_read(self, df: DataFrame, read: str) -> tuple:
+    def assign_read(self, df: DataFrame, read: str) -> tuple[str,str]:
         """Assign read to a segment (used in func assign_reads)
 
         Args:
@@ -149,7 +157,7 @@ class Analysis:
             read (str): read to classify
 
         Returns:
-            tuple: segment name of best hit
+            tuple[str,str]: read_id, assigned segment
         """
         subdf = df[df["q_name"] == read]
         subdf.sort_values("h_mean")
