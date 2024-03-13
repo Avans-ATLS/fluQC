@@ -8,7 +8,7 @@ from functools import partial
 from Bio import SeqIO
 import pandas as pd
 from pandas import DataFrame
-
+pd.options.mode.copy_on_write = True
 
 class Analysis:
     MIN_COVERAGE: int = 40  # n reads required to be assigned to segment
@@ -383,4 +383,7 @@ class Analysis:
             for line in stdout:
                 for i, k in enumerate(df):
                     df[k].append(line[i])
-            return pd.DataFrame(df)
+            df = pd.DataFrame(df)
+            df["depth"] = df["depth"].astype(int)
+            df["pos"] = df["pos"].astype(int)
+            return df
