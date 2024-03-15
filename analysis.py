@@ -10,6 +10,13 @@ import pandas as pd
 from pandas import DataFrame
 pd.options.mode.copy_on_write = True
 
+
+
+
+        
+        
+
+
 class Analysis:
     MIN_COVERAGE: int = 40  # n reads required to be assigned to segment
     MIXED_THRESHOLD: float = (

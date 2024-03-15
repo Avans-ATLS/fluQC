@@ -34,8 +34,17 @@ loggers:
     propagate: no
   Dashboard:
     level: INFO
-    handlers: [console]
+    handlers: [console, logfile]
     propagate: no
+  SamplePaths:
+    level: DEBUG
+    handlers: [logfile]
+    propagate: no
+  Wrappers:
+    level: DEBUG
+    handlers: [logfile]
+    propagate: no
+
 
 root:
   level: DEBUG
