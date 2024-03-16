@@ -8,6 +8,7 @@ from fluqc.figuredata import FigureData
 from fluqc.samplepaths import SamplePaths
 from fluqc.wrappers import Wrappers
 from fluqc.dash import launch_dashboard
+
 if __name__ == "__main__":
     with open("config/logging_config.yml", "rt") as f:
         config = yaml.safe_load(f.read())
@@ -50,11 +51,13 @@ if __name__ == "__main__":
         data.append_depth(s.samplename, s.samdepth, segments)
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
 
-    logger.debug(f'Column lengths for dips: {[len(x) for x in data.dips.values()]}')
-    logger.debug(f'Column lengths for covstats: {[len(x) for x in data.covstats.values()]}')
-    logger.debug(f'Column lengths for depth: {[len(x) for x in data.depth.values()]}')
-    logger.debug(f'Column lengths for lengths: {[len(x) for x in data.readlengths.values()]}')
+    logger.debug(f"Column lengths for dips: {[len(x) for x in data.dips.values()]}")
+    logger.debug(
+        f"Column lengths for covstats: {[len(x) for x in data.covstats.values()]}"
+    )
+    logger.debug(f"Column lengths for depth: {[len(x) for x in data.depth.values()]}")
+    logger.debug(
+        f"Column lengths for lengths: {[len(x) for x in data.readlengths.values()]}"
+    )
 
     launch_dashboard(data)
-
-    

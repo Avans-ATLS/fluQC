@@ -3,13 +3,17 @@ from logging import Logger
 
 import pandas as pd
 from Bio import SeqIO
+
 pd.options.mode.copy_on_write = True
+
 
 class FigureData:
     """Compute and combine results for visualization"""
-    l: Logger = logging.getLogger('FigureData')
+
+    l: Logger = logging.getLogger("FigureData")
     DIP_RATIO: float = 2.0  # if < alignment length / segment length: putative dip
-    DEPTH_BINSIZE: int = 25 # binsize for depth histogram
+    DEPTH_BINSIZE: int = 25  # binsize for depth histogram
+
     def __init__(self) -> None:
         # create empty dicts:
         self.dips: dict[str, list] = {
@@ -94,24 +98,30 @@ class FigureData:
                     self.dips[k].append(None)
 
     def append_depth(self, samplename: str, depth_path: str, segments) -> None:
-        df = pd.read_csv(depth_path, sep='\t')
-    
-        
+        df = pd.read_csv(depth_path, sep="\t")
+
         # calculate rolling average per DEPTH_BINSIZE
         for segment in segments:
-            subdf = df[df['segment'] == segment]
-            rolling_avg = subdf['depth'].rolling(window=self.DEPTH_BINSIZE).mean().iloc[::self.DEPTH_BINSIZE].dropna().reset_index(drop=True)
-            
+            subdf = df[df["segment"] == segment]
+            rolling_avg = (
+                subdf["depth"]
+                .rolling(window=self.DEPTH_BINSIZE)
+                .mean()
+                .iloc[:: self.DEPTH_BINSIZE]
+                .dropna()
+                .reset_index(drop=True)
+            )
+
             # start position 0 at a coverage of 0
-            self.depth['Sample'].append(samplename)
-            self.depth['Segment'].append(segment.split('_')[1])
-            self.depth['Position'].append(0)
-            self.depth['RollingAvg'].append(0)
+            self.depth["Sample"].append(samplename)
+            self.depth["Segment"].append(segment.split("_")[1])
+            self.depth["Position"].append(0)
+            self.depth["RollingAvg"].append(0)
             # add rolling avg for segment
             for avg in rolling_avg.items():
-                self.depth['Sample'].append(samplename)
-                self.depth["Segment"].append(segment.split('_')[1])
-                self.depth['Position'].append((avg[0]+1)*50)
+                self.depth["Sample"].append(samplename)
+                self.depth["Segment"].append(segment.split("_")[1])
+                self.depth["Position"].append((avg[0] + 1) * 50)
                 self.depth["RollingAvg"].append(avg[1])
 
             # If segment not in data, append None
@@ -119,25 +129,21 @@ class FigureData:
                 if len(v) < len(self.depth["Sample"]):
                     self.dips[k].append(None)
 
-        
-
-    def append_segment_readlengths(self, samplename: str, fastq_path: str, assignments: dict) -> None:
+    def append_segment_readlengths(
+        self, samplename: str, fastq_path: str, assignments: dict
+    ) -> None:
         def lengths_from_fastq(fastq_path: str) -> dict:
             self.l.debug("Counting readlengths")
             with open(fastq_path) as fq:
-                d = {
-                    record.id: len(record.seq) 
-                    for record in SeqIO.parse(fq, 'fastq')
-                }
+                d = {record.id: len(record.seq) for record in SeqIO.parse(fq, "fastq")}
             return d
-        
+
         # rename keys to segment names in assignments
-        assignments = {k: v.split('_' )[1] for k, v in assignments.items()}
-        
+        assignments = {k: v.split("_")[1] for k, v in assignments.items()}
+
         lengths = lengths_from_fastq(fastq_path)
         # for each assigned read, append length to data
         for k, v in assignments.items():
-            self.readlengths['Sample'].append(samplename)
-            self.readlengths['Segment'].append(v)
-            self.readlengths['ReadLength'].append(lengths[k])
-    
+            self.readlengths["Sample"].append(samplename)
+            self.readlengths["Segment"].append(v)
+            self.readlengths["ReadLength"].append(lengths[k])

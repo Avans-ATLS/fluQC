@@ -6,6 +6,7 @@ from logging import Logger
 
 import pandas as pd
 from pandas import DataFrame
+
 pd.options.mode.copy_on_write = True
 
 from fluqc.samplepaths import SamplePaths

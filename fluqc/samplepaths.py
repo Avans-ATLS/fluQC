@@ -2,6 +2,7 @@ import logging
 import os.path
 from logging import Logger
 
+
 class SamplePaths:
     """Store paths for a sample"""
 
@@ -26,4 +27,3 @@ class SamplePaths:
         self.samdepth: str = os.path.join(self.outdir, f"{self.samplename}.depth.tsv")
 
         self.make_directories()
-
