@@ -35,9 +35,9 @@ class Plots:
     def dip_heatmap(self) -> Figure:
         df = DataFrame(self.d.dips).set_index("Sample")
         df = df.transpose()
+        for col in df.columns:
+            df[col] = df[col].astype(float)
         fig = px.imshow(df, text_auto=True)
-        fig.update_yaxes(categoryorder="category ascending")
-        fig.update_xaxes(categoryorder="category ascending")
         fig.update_layout(
             title=f"Heatmap of % putative DIPs",
             xaxis_title="Sample",
@@ -56,10 +56,9 @@ class Plots:
         # create figure per option and add to dict
         for opt in callback_options:
             subdf = df[["Sample", "Segment", opt]]
+            subdf[opt] = subdf[opt].astype(float)
             subdf = subdf.pivot(index="Segment", columns="Sample", values=opt)
             fig = px.imshow(subdf, text_auto=True)
-            fig.update_yaxes(categoryorder="category ascending")
-            fig.update_xaxes(categoryorder="category ascending")
             fig.update_layout(
                 title=f"Heatmap of: {opt}",
                 xaxis_title="Sample",
@@ -92,6 +91,8 @@ class Plots:
 
             for i, segment in enumerate(sorted(subdf["Segment"].unique()), start=1):
                 segdf = subdf[subdf["Segment"] == segment]
+                segdf["position"] = segdf["Position"].astype(int)
+                segdf["RollingAvg"] = segdf["RollingAvg"].astype(float)
 
                 fig.add_trace(
                     go.Bar(

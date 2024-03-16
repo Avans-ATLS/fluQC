@@ -31,6 +31,7 @@ class Wrappers:
         map = subprocess.Popen(
             minimap,
             stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
         )
         # sort
