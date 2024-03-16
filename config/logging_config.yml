@@ -28,7 +28,7 @@ loggers:
     level: DEBUG
     handlers: [console, logfile]
     propagate: no
-  Analysis:
+  FigureData:
     level: DEBUG
     handlers: [console, logfile]
     propagate: no

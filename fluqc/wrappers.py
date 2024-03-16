@@ -1,63 +1,28 @@
+import logging
 import subprocess
-import os
-import logging.config
-from logging import Logger
 import multiprocessing
 from functools import partial
+from logging import Logger
 
-from Bio import SeqIO
 import pandas as pd
 from pandas import DataFrame
 pd.options.mode.copy_on_write = True
 
+from fluqc.samplepaths import SamplePaths
 
 
-class SamplePaths:
-    """Store paths for a sample
-    """
-    l: Logger = logging.getLogger("SamplePaths")
-    HA_MIXED: bool = None
-    NA_MIXED: bool = None
+class Wrappers:
+    """Collection of CommandLine wrappers"""
 
-    def make_directories(self) -> None:
-        if not os.path.isdir(self.outdir):
-            os.makedirs(self.outdir)
-            self.l.debug(f"Created output directory: {self.outdir}")
-            
-    def __init__(self, fastq: str, db: str, outdir: str):
-        self.l.info(f"Creating instance for {os.path.basename(fastq)}")
-        self.fastq: str = os.path.abspath(fastq)
-        self.samplename: str = os.path.basename(fastq).replace(".fastq", "")
-        self.outdir = os.path.join(outdir, self.samplename)
-        self.db = os.path.abspath(db)
-        self.paf: str = os.path.join(self.outdir, f"{self.samplename}.paf")
-        self.outsam: str = os.path.join(self.outdir, f"{self.samplename}.sam")
-        self.samcov: str = os.path.join(self.outdir, f"{self.samplename}.cov.tsv")
-        self.samdepth: str = os.path.join(self.outdir, f"{self.samplename}.depth.tsv")
-        
-        self.make_directories()
-        
-        
-class Analysis():
-    def __init__(self) -> None:
-        pass
-    def percent_dips(self) -> DataFrame:
-        pass
-    def samstats_heatmap(self) -> DataFrame:
-        pass
-    def depth_histogram(self) -> DataFrame:
-        pass
-        
-        
-class Wrappers():
     l: Logger = logging.getLogger("Wrappers")
     MIN_COVERAGE: int = 40  # n reads required to be assigned to segment
     MIXED_THRESHOLD: float = (
         0.2  # min fraction of second most abundant segment to be considered mixed
     )
-    def __init__(self, samplepaths: SamplePaths):
+
+    def __init__(self, samplepaths: SamplePaths) -> None:
         self.p = samplepaths
-        
+
     def minimap2(self, threads: int) -> None:
         # run minimap2
         minimap = f"minimap2 -ax map-ont -t {threads} {self.p.db} {self.p.fastq}"
@@ -67,7 +32,6 @@ class Wrappers():
             stdout=subprocess.PIPE,
             shell=True,
         )
-
         # sort
         sort = subprocess.Popen(
             f"samtools sort -O SAM -",
@@ -121,7 +85,7 @@ class Wrappers():
             df["n_match"] = df["n_match"].astype(int)
             df["t_len"] = df["t_len"].astype(int)
             df["aln_len"] = df["aln_len"].astype(int)
-            df.to_csv(self.p.paf, sep='\t', index=False)
+            df.to_csv(self.p.paf, sep="\t", index=False)
 
     def samtools_cov(self) -> None:
         self.l.info("Running samtools coverage")
@@ -155,9 +119,9 @@ class Wrappers():
                 for i, k in enumerate(df):
                     df[k].append(line[i])
             df = pd.DataFrame(df)
-            df.to_csv(self.p.samcov, sep='\t', index=False)
+            df.to_csv(self.p.samcov, sep="\t", index=False)
             self.l.debug(f"Wrote samtools coverage results to {self.p.samcov}")
-            
+
     def samtools_depth(self) -> None:
         self.l.info("Running samtools depth")
         # run samtools depth
@@ -186,10 +150,10 @@ class Wrappers():
             df = pd.DataFrame(df)
             df["depth"] = df["depth"].astype(int)
             df["pos"] = df["pos"].astype(int)
-            df.to_csv(self.p.samdepth, sep='\t', index=False)
+            df.to_csv(self.p.samdepth, sep="\t", index=False)
             self.l.debug(f"Wrote samtools depth results to {self.p.samdepth}")
-    
-    def assign_read(self, df: DataFrame, read: str) -> tuple[str,str]:
+
+    def assign_read(self, df: DataFrame, read: str) -> tuple[str, str]:
         """Assign read to a segment (used in func assign_reads)
 
         Args:
@@ -244,8 +208,7 @@ class Wrappers():
 
             return assignments
 
-        
-        df = pd.read_csv(self.p.paf, sep='\t')
+        df = pd.read_csv(self.p.paf, sep="\t")
         self.l.debug("Computing harmonic means")
         df["h_mean"] = harmonic_mean(df["q_end"] - df["q_start"], df["n_match"])
         self.l.debug("Counting reads per segment")
