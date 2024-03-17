@@ -12,6 +12,11 @@ from fluqc.texts import DashboardText
 
 
 def launch_dashboard(data: FigureData) -> None:
+    """Create html layout and launch QC dashboard
+
+    Args:
+        data (FigureData): instance of FigureData class containing data to plot
+    """
 
     @callback(Output("samstats", "figure"), Input("statistic", "value"))
     def show_covstats(value) -> Figure:

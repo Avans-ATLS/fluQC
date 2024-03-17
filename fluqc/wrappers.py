@@ -25,6 +25,13 @@ class Wrappers:
         self.p = samplepaths
 
     def minimap2(self, threads: int) -> None:
+        """Run Minimap2 for a sample
+        Mapped reads are sorted and written to a samfile.
+        Sam format is converted to paf and written to a file.
+
+        Args:
+            threads (int): Number of threads to use in minimap2
+        """
         # run minimap2
         minimap = f"minimap2 -ax map-ont -t {threads} {self.p.db} {self.p.fastq}"
         self.l.info(f"Running minimap for read classification")
@@ -90,6 +97,7 @@ class Wrappers:
             df.to_csv(self.p.paf, sep="\t", index=False)
 
     def samtools_cov(self) -> None:
+        """Run samtools coverage, write output to file"""
         self.l.info("Running samtools coverage")
         # run samtools coverage
         cov = subprocess.Popen(
@@ -125,6 +133,7 @@ class Wrappers:
             self.l.debug(f"Wrote samtools coverage results to {self.p.samcov}")
 
     def samtools_depth(self) -> None:
+        """Run samtools depth, write output to file"""
         self.l.info("Running samtools depth")
         # run samtools depth
         depth = subprocess.Popen(
@@ -169,7 +178,7 @@ class Wrappers:
         subdf.sort_values("h_mean")
         return read, subdf.iloc[0]["t_name"]
 
-    def assign_reads(self, threads: int) -> list:
+    def assign_reads(self, threads: int) -> tuple[list, dict]:
         """From minimap2 PAF output, find top hit for each read by harmonic mean.
         For hits to multiple HA/NA subtypes, determine if mixed.
         if not mixed, get the subtype with most hits
@@ -179,7 +188,7 @@ class Wrappers:
             df (DataFrame): DataFrame of PAF output
 
         Returns:
-            list: Unique segments which reads mapped to
+            tuple[list, dict]: Unique assigned segments, per read assignments
         """
 
         def harmonic_mean(map_len: int, n_match: int) -> float:
@@ -194,7 +203,15 @@ class Wrappers:
             h_mean = 2 * ((map_len * n_match) / (map_len + n_match))
             return h_mean
 
-        def assign_parallel(df: DataFrame) -> dict:
+        def assign_parallel(df: DataFrame) -> dict[str, str]:
+            """Parellelize assignment of reads to segments
+
+            Args:
+                df (DataFrame): PAF data
+
+            Returns:
+                dict[str, str]: read id: assigned segment
+            """
             n_processes = min(threads, len(df["q_name"].unique()))
             pool = multiprocessing.Pool(processes=n_processes)
 

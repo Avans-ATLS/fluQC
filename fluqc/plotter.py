@@ -33,6 +33,11 @@ class Plots:
         self.lengths: dict[str, Figure] = self.readlengths()
 
     def dip_heatmap(self) -> Figure:
+        """Render heatmap of DIP percentages
+
+        Returns:
+            Figure: DIP heatmap figure
+        """
         df = DataFrame(self.d.dips).set_index("Sample")
         df = df.transpose()
         for col in df.columns:
@@ -47,7 +52,12 @@ class Plots:
         )
         return fig
 
-    def covstats(self) -> dict[str:Figure]:
+    def covstats(self) -> dict[str, Figure]:
+        """Render covstats heatmaps per statistic
+
+        Returns:
+            dict[str, Figure]: statistic: heatmap figure
+        """
         df = DataFrame(self.d.covstats)
         callback_options = df.columns[2:]
 
@@ -70,7 +80,12 @@ class Plots:
 
         return d
 
-    def cov_histogram(self) -> dict[str:Figure]:
+    def cov_histogram(self) -> dict[str, Figure]:
+        """Render per-segment coverage histogram per sample
+
+        Returns:
+            dict[str, Figure]: samplename: coverage histogram
+        """
         df = DataFrame(self.d.depth)
 
         # init dict to map figures to samples
@@ -123,7 +138,12 @@ class Plots:
 
         return d
 
-    def readlengths(self) -> dict[str:Figure]:
+    def readlengths(self) -> dict[str, Figure]:
+        """Render violin plots of readlength per sample
+
+        Returns:
+            dict[str, Figure]: samplename: violin plot
+        """
         df = DataFrame(self.d.readlengths)
 
         # init dict to map figures to samples

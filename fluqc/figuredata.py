@@ -50,8 +50,19 @@ class FigureData:
         }
 
     def append_percent_dips(
-        self, samplename: str, paf_path: str, segments: list
+        self, samplename: str, paf_path: str, segments: list[str]
     ) -> None:
+        """Append percentage of DIPs per segment to results for a sample
+        %DIP is estimated by calculating the ratio of segment length / alignment length.
+        Ratio's passing the threshold are counted as a putative DIP.
+        A threshold of 2 will count an alignment as DIP when it's alignment lenght is
+        less than half the segment lenght
+
+        Args:
+            samplename (str): Name of current sample
+            paf_path (str): Path to paf file
+            segments (list[str]): Assigned segments
+        """
 
         paf = pd.read_csv(paf_path, sep="\t")
         # add current samplename to data
@@ -79,8 +90,15 @@ class FigureData:
                 self.dips[k].append(None)
 
     def append_covstats(
-        self, samplename: str, covstats_path: str, segments: list
+        self, samplename: str, covstats_path: str, segments: list[str]
     ) -> None:
+        """Append results from samtools coverage to results for a sample
+
+        Args:
+            samplename (str): Name of current sample
+            covstats_path (str): Path to samtools coverage results
+            segments (list[str]): Assigned segments
+        """
 
         df = pd.read_csv(covstats_path, sep="\t", index_col=0)
 
@@ -97,7 +115,16 @@ class FigureData:
                 if len(v) < len(self.covstats["Sample"]):
                     self.dips[k].append(None)
 
-    def append_depth(self, samplename: str, depth_path: str, segments) -> None:
+    def append_depth(
+        self, samplename: str, depth_path: str, segments: list[str]
+    ) -> None:
+        """Append data from samtools depth to results for a sample
+
+        Args:
+            samplename (str): Name of current sample
+            depth_path (str): Path to samtools depth results
+            segments (list[str]): Assigned segments
+        """
         df = pd.read_csv(depth_path, sep="\t")
 
         # calculate rolling average per DEPTH_BINSIZE
@@ -130,9 +157,25 @@ class FigureData:
                     self.dips[k].append(None)
 
     def append_segment_readlengths(
-        self, samplename: str, fastq_path: str, assignments: dict
+        self, samplename: str, fastq_path: str, assignments: dict[str, str]
     ) -> None:
-        def lengths_from_fastq(fastq_path: str) -> dict:
+        """Append readlengths per segment to results for a sample
+
+        Args:
+            samplename (str): Name of current sample
+            fastq_path (str): Path to fastq file
+            assignments (dict[str, str]): Assignments of reads to segments
+        """
+
+        def lengths_from_fastq(fastq_path: str) -> dict[str, int]:
+            """Get readlenghts from a fastq file
+
+            Args:
+                fastq_path (str): Path to fastq file
+
+            Returns:
+                dict[str, int]: read id: read length
+            """
             self.l.debug("Counting readlengths")
             with open(fastq_path) as fq:
                 d = {record.id: len(record.seq) for record in SeqIO.parse(fq, "fastq")}

@@ -20,9 +20,11 @@ if __name__ == "__main__":
         description="Launch a QC dashboard for an influenza sequencing run",
         epilog="Developed by Sander Boden (s.boden1@avans.nl)",
     )
-    parser.add_argument("fastq", help="path to directory of fastqs to analyze")
-    parser.add_argument("database", help="path to IRMA database")
-    parser.add_argument("outdir", help="Path to directory to place output")
+    parser.add_argument(
+        "fastq", type=str, help="path to directory of fastqs to analyze"
+    )
+    parser.add_argument("database", type=str, help="path to IRMA database")
+    parser.add_argument("outdir", type=str, help="Path to directory to place output")
     parser.add_argument("--threads", type=int, default=2, help="Number of threads")
     args = parser.parse_args()
 
