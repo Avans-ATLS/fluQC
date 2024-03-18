@@ -21,10 +21,11 @@ class Wrappers:
         0.2  # min fraction of second most abundant segment to be considered mixed
     )
 
-    def __init__(self, samplepaths: SamplePaths) -> None:
+    def __init__(self, samplepaths: SamplePaths, threads: int) -> None:
         self.p = samplepaths
+        self.t = threads
 
-    def minimap2(self, threads: int) -> None:
+    def minimap2(self) -> None:
         """Run Minimap2 for a sample
         Mapped reads are sorted and written to a samfile.
         Sam format is converted to paf and written to a file.
@@ -33,7 +34,7 @@ class Wrappers:
             threads (int): Number of threads to use in minimap2
         """
         # run minimap2
-        minimap = f"minimap2 -ax map-ont -t {threads} {self.p.db} {self.p.fastq}"
+        minimap = f"minimap2 -ax map-ont -t {self.t} {self.p.db} {self.p.fastq}"
         self.l.info(f"Running minimap for read classification")
         map = subprocess.Popen(
             minimap,
@@ -174,11 +175,11 @@ class Wrappers:
         Returns:
             tuple[str,str]: read_id, assigned segment
         """
-        subdf = df[df["q_name"] == read]
-        subdf.sort_values("h_mean")
-        return read, subdf.iloc[0]["t_name"]
+        rows = df[df["q_name"] == read]
+        idx_min = rows["h_mean"].idxmin()
+        return read, df.loc[idx_min, "t_name"]
 
-    def assign_reads(self, threads: int) -> tuple[list, dict]:
+    def assign_reads(self) -> tuple[list, dict]:
         """From minimap2 PAF output, find top hit for each read by harmonic mean.
         For hits to multiple HA/NA subtypes, determine if mixed.
         if not mixed, get the subtype with most hits
@@ -212,7 +213,7 @@ class Wrappers:
             Returns:
                 dict[str, str]: read id: assigned segment
             """
-            n_processes = min(threads, len(df["q_name"].unique()))
+            n_processes = min(self.t, len(df["q_name"].unique()))
             pool = multiprocessing.Pool(processes=n_processes)
 
             # create function with fixed df arg

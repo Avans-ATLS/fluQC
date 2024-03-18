@@ -1,5 +1,7 @@
 import logging
 from logging import Logger
+import io
+import multiprocessing as mp
 
 import pandas as pd
 from Bio import SeqIO
@@ -14,7 +16,8 @@ class FigureData:
     DIP_RATIO: float = 2.0  # if < alignment length / segment length: putative dip
     DEPTH_BINSIZE: int = 25  # binsize for depth histogram
 
-    def __init__(self) -> None:
+    def __init__(self, threads: int) -> None:
+        self.t = threads
         # create empty dicts:
         self.dips: dict[str, list] = {
             "Sample": [],
@@ -178,7 +181,9 @@ class FigureData:
             """
             self.l.debug("Counting readlengths")
             with open(fastq_path) as fq:
-                d = {record.id: len(record.seq) for record in SeqIO.parse(fq, "fastq")}
+                d = {}
+                for record in SeqIO.parse(fq, "fastq"):
+                    d[record.id] = len(record.seq)
             return d
 
         # rename keys to segment names in assignments

@@ -110,4 +110,4 @@ def launch_dashboard(data: FigureData) -> None:
             dcc.Graph(id="depth"),
         ],
     )
-    app.run(debug=True)
+    app.run(debug=False)

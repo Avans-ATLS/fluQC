@@ -36,16 +36,16 @@ if __name__ == "__main__":
     logger.info(f"Starting analysis for {len(samples)} samples in {args.fastq}")
 
     # init FigureData class
-    data = FigureData()
+    data = FigureData(args.threads)
 
     for s in samples:
         # init Wrappers class for sample
-        run = Wrappers(s)
+        run = Wrappers(s, args.threads)
         # run analyses
-        run.minimap2(2)
+        run.minimap2()
         run.samtools_cov()
         run.samtools_depth()
-        segments, assignments = run.assign_reads(2)
+        segments, assignments = run.assign_reads()
 
         # append results to FigureData class
         data.append_percent_dips(s.samplename, s.paf, segments)
