@@ -3,6 +3,7 @@ import subprocess
 import multiprocessing
 from functools import partial
 from logging import Logger
+import time
 
 import pandas as pd
 from pandas import DataFrame
@@ -33,11 +34,20 @@ class Wrappers:
         Args:
             threads (int): Number of threads to use in minimap2
         """
+        # read filtering
+        # nanofilt = f'NanoFilt -l 400 -q 8 {self.p.fastq}'
+        # filt = subprocess.Popen(
+        #     nanofilt,
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE,
+        #     shell=True,
+        # )
         # run minimap2
         minimap = f"minimap2 -ax map-ont -t {self.t} {self.p.db} {self.p.fastq}"
         self.l.info(f"Running minimap for read classification")
         map = subprocess.Popen(
             minimap,
+            # stdin=filt.stdout,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True,
@@ -227,14 +237,17 @@ class Wrappers:
             pool.join()
 
             return assignments
-
+        
         df = pd.read_csv(self.p.paf, sep="\t")
         self.l.debug("Computing harmonic means")
         df["h_mean"] = harmonic_mean(df["q_end"] - df["q_start"], df["n_match"])
         self.l.debug("Counting reads per segment")
+        start_time = time.time()
         read_assignments = assign_parallel(df)
         segment_counts = pd.Series(read_assignments).value_counts().to_dict()
-
+        end_time = time.time()
+        print(f'{self.p.samplename} took: {end_time-start_time} seconds')
+        self.l.info((f'Counting reads for {self.p.samplename} took: {end_time-start_time} seconds'))
         for k, v in segment_counts.items():
             self.l.debug(f"{k}:\t{v}")
 
@@ -289,5 +302,6 @@ class Wrappers:
                 # keep only subtype with most reads (first in list)
                 all_segments = [s for s in all_segments if s not in na]
                 all_segments.append(segments[0])
-
+        
+        
         return all_segments, read_assignments

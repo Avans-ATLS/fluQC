@@ -151,7 +151,7 @@ class FigureData:
             for avg in rolling_avg.items():
                 self.depth["Sample"].append(samplename)
                 self.depth["Segment"].append(segment.split("_")[1])
-                self.depth["Position"].append((avg[0] + 1) * 50)
+                self.depth["Position"].append((avg[0] + 1) * self.DEPTH_BINSIZE)
                 self.depth["RollingAvg"].append(avg[1])
 
             # If segment not in data, append None

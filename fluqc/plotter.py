@@ -97,7 +97,7 @@ class Plots:
             fig = make_subplots(
                 rows=1,
                 cols=len(df["Segment"].unique()),
-                subplot_titles=subdf["Segment"].unique(),
+                subplot_titles=sorted(subdf["Segment"].unique()),
                 shared_xaxes=True,
                 shared_yaxes=True,
                 vertical_spacing=0,
