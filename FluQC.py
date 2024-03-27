@@ -47,6 +47,9 @@ if __name__ == "__main__":
         run.samtools_depth()
         segments, assignments = run.assign_reads()
 
+        unmapped, mapped = run.mapped_reads_analysis()
+        logger.info(f"Percentage of reads unmapped: {(unmapped / (mapped+unmapped)) * 100}")
+
         # append results to FigureData class
         data.append_percent_dips(s.samplename, s.paf, segments)
         data.append_covstats(s.samplename, s.samcov, segments)

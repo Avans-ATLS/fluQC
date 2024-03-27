@@ -13,7 +13,7 @@ formatters:
 handlers:
   console:
     class: logging.StreamHandler
-    level: ERROR
+    level: INFO
     formatter: console
     stream: ext://sys.stdout
   logfile:
