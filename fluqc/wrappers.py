@@ -224,8 +224,11 @@ class Wrappers:
                 dict[str, str]: read id: assigned segment
             """
             n_processes = min(self.t, len(df["q_name"].unique()))
-            pool = multiprocessing.Pool(processes=n_processes)
-
+            try: 
+                pool = multiprocessing.Pool(processes=n_processes)
+            except ValueError as e:
+                self.l.warning(f"No reads to assign, skipping sample {self.p.samplename}")
+                return None
             # create function with fixed df arg
             assign_partial = partial(self.assign_read, df)
 
@@ -244,6 +247,8 @@ class Wrappers:
         self.l.debug("Counting reads per segment")
         start_time = time.time()
         read_assignments = assign_parallel(df)
+        if read_assignments == None:
+            return None, None # return none if no reads were assigned
         segment_counts = pd.Series(read_assignments).value_counts().to_dict()
         end_time = time.time()
         print(f'{self.p.samplename} took: {end_time-start_time} seconds')
@@ -311,7 +316,7 @@ class Wrappers:
             cmd = f'samtools view -c -f4 {self.p.outsam}'
             n_unmapped_reads = int(subprocess.check_output(
                 cmd,
-                stderr=subprocess.STDOUT,
+                stderr=subprocess.PIPE,
                 text=True,
                 shell=True,
             ))
@@ -322,7 +327,7 @@ class Wrappers:
             cmd = f'samtools view -c -F4 {self.p.outsam}'
             n_mapped_reads = int(subprocess.check_output(
                 cmd,
-                stderr=subprocess.STDOUT,
+                stderr=subprocess.PIPE,
                 text=True,
                 shell=True,
             ))
