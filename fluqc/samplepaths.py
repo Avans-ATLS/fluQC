@@ -7,8 +7,6 @@ class SamplePaths:
     """Store paths for a sample"""
 
     l: Logger = logging.getLogger("SamplePaths")
-    HA_MIXED: bool = None
-    NA_MIXED: bool = None
 
     def make_directories(self) -> None:
         """If directory does not exist, create it"""
