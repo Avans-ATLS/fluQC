@@ -84,7 +84,7 @@ def launch_dashboard(data: FigureData) -> None:
             html.H2(
                 children="--- Mapping Statistics ---",
                 style={
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "color": colors["h2"],
                     "BackgroundColor": colors["background"],
                 },
