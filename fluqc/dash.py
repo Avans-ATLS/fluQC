@@ -65,7 +65,7 @@ def launch_dashboard(data: FigureData) -> None:
                 },
             ),
             html.H2(
-                children="--- Percentage Putative Differential Interfering Particles ---",
+                children="--- Percentage Putative Defective Interfering Particles ---",
                 style={
                     "textAlign": "center",
                     "color": colors["h2"],

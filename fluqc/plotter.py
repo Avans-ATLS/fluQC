@@ -167,7 +167,7 @@ class Plots:
                 )
             )
             fig.update_layout(
-                title=f"Segment coverage: {s}",
+                title=f"Segment depth: {s}",
                 xaxis_title="Position",
                 yaxis_title="Read depth",
                 plot_bgcolor="rgba(0,0,0,0)",
