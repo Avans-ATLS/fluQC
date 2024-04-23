@@ -9,6 +9,19 @@ from fluqc.samplepaths import SamplePaths
 from fluqc.wrappers import Wrappers
 from fluqc.dash import launch_dashboard
 
+def get_subtype(segments: list) -> str:
+    try:
+        ha = [x for x in segments if x.split('_')[1] == 'HA'][0].split('_')[-1]
+    except:
+        ha = 'Hx'
+    try:
+        na = [x for x in segments if x.split('_')[1] == 'NA'][0].split('_')[-1]
+    except:
+        na = 'Nx'
+    return f'{ha}{na}'
+
+
+
 if __name__ == "__main__":
     with open("config/logging_config.yml", "rt") as f:
         config = yaml.safe_load(f.read())
@@ -47,8 +60,10 @@ if __name__ == "__main__":
         run.samtools_depth()
         segments, assignments = run.assign_reads()
 
-        unmapped, mapped = run.mapped_reads_analysis()
-        logger.info(f"Percentage of reads unmapped: {(unmapped / (mapped+unmapped)) * 100}")
+        # get subtype
+        subtype = get_subtype(segments)
+        
+
 
         # check if assignment was unsuccessful
         if segments == None and assignments == None:
@@ -58,14 +73,8 @@ if __name__ == "__main__":
         data.append_covstats(s.samplename, s.samcov, segments)
         data.append_depth(s.samplename, s.samdepth, segments)
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
+        data.append_len_qual(s.samplename, s.fastq)
+        data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
 
-    logger.debug(f"Column lengths for dips: {[len(x) for x in data.dips.values()]}")
-    logger.debug(
-        f"Column lengths for covstats: {[len(x) for x in data.covstats.values()]}"
-    )
-    logger.debug(f"Column lengths for depth: {[len(x) for x in data.depth.values()]}")
-    logger.debug(
-        f"Column lengths for lengths: {[len(x) for x in data.readlengths.values()]}"
-    )
 
     launch_dashboard(data)

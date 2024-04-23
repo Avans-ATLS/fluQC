@@ -6,13 +6,13 @@ from plotly.graph_objects import Figure, Scatter
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pandas import DataFrame
+import numpy as np
 
 from fluqc.figuredata import FigureData
 
 
 class Plots:
     """Generate Figures for dashboard"""
-
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )
@@ -31,6 +31,7 @@ class Plots:
         self.cov: dict[str, Figure] = self.covstats()
         self.depth: dict[str, Figure] = self.cov_histogram()
         self.lengths: dict[str, Figure] = self.readlengths()
+        self.bivariate: dict[str, Figure] = self.len_qual()
 
     def dip_heatmap(self) -> Figure:
         """Render heatmap of DIP percentages
@@ -52,6 +53,28 @@ class Plots:
         )
         return fig
 
+    def len_qual(self) -> dict[str, Figure]:
+        """Render length v.s. quality bivariate plots per sample
+
+        Returns:
+            dict[str, Figure]: bivariate plot
+        """
+        df = DataFrame(self.d.len_qual)
+        callback_options = df['Sample'].unique().tolist()
+
+        d = {}
+        for opt in callback_options:
+            subdf = df[df["Sample"] == opt]
+            fig = px.scatter(subdf, x='length', y='quality')
+            fig.update_layout(
+                title=f"Sample: {opt}",
+                xaxis_title="Read Length",
+                yaxis_title="Read Quality",
+            )
+            d[opt] = fig
+        
+        return d
+    
     def covstats(self) -> dict[str, Figure]:
         """Render covstats heatmaps per statistic
 
@@ -120,8 +143,8 @@ class Plots:
                     row=1,
                     col=i,
                 )
-                x_range = [0, segdf["Position"].max() + 10]
-                y_range = [0, subdf["RollingAvg"].max() + 10]
+                x_range = [0, segdf["Position"].max() + 5]
+                y_range = [0, subdf["RollingAvg"].max() + 1]
 
                 fig.update_xaxes(range=x_range, tickangle=45, row=1, col=i)
                 fig.update_yaxes(range=y_range, tickangle=45, row=1, col=i)
@@ -169,7 +192,7 @@ class Plots:
             fig.update_layout(
                 title=f"Segment depth: {s}",
                 xaxis_title="Position",
-                yaxis_title="Read depth",
+                yaxis_title="Read depth (log10)",
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
                 font_color=self.colors["text"],
