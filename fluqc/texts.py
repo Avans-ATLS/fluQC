@@ -15,6 +15,10 @@ Current QC implemenations:
 For problems, feedback and feature requests, please refer to the [github repo](https://github.com/AVANS-ALST/fluqc)
 """
 
+    table_text: str = """
+The table below summarizes general statistics of the fastq data given to the dashboard.
+"""
+
     dip_explanation: str = """
 Defective Interfering Particles (DIPs) are ...
 
