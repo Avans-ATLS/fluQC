@@ -192,7 +192,7 @@ class Plots:
             fig.update_layout(
                 title=f"Segment depth: {s}",
                 xaxis_title="Position",
-                yaxis_title="Read depth",
+                yaxis_title="Read depth (log10)",
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
                 font_color=self.colors["text"],
