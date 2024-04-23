@@ -73,6 +73,7 @@ if __name__ == "__main__":
         data.append_covstats(s.samplename, s.samcov, segments)
         data.append_depth(s.samplename, s.samdepth, segments)
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
+        data.append_len_qual(s.samplename, s.fastq)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
 
 

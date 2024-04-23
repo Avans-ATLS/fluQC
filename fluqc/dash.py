@@ -30,6 +30,10 @@ def launch_dashboard(data: FigureData) -> None:
     @callback(Output("depth", "figure"), Input("sample", "value"))
     def show_depth(value) -> Figure:
         return p.depth[value]
+    
+    @callback(Output("bivariate", 'figure'), Input("qc_sample", 'value'))
+    def show_bivariate(value) -> Figure:
+        return p.bivariate[value]
 
     colors = {
         "background": "#FFF7F0",
@@ -86,6 +90,17 @@ def launch_dashboard(data: FigureData) -> None:
                 },
             ),
             dash_table.DataTable(table.to_dict('records')),
+            dcc.Dropdown(list(p.bivariate.keys()), list(p.bivariate.keys())[0], id="qc_sample"),
+            dcc.Graph(id='bivariate'),
+            dcc.Dropdown(list(p.cov.keys()), list(p.cov.keys())[0], id="statistic"),
+            html.H2(
+                children="--- Mapping Statistics ---",
+                style={
+                    "textAlign": "center",
+                    "color": colors["h2"],
+                    "BackgroundColor": colors["background"],
+                },
+            ),
             dcc.Markdown(
                 children=t.mapping_explanation,
                 style={
@@ -94,7 +109,6 @@ def launch_dashboard(data: FigureData) -> None:
                     "BackgroundColor": colors["background"],
                 },
             ),
-            dcc.Dropdown(list(p.cov.keys()), list(p.cov.keys())[0], id="statistic"),
             html.H3(children="Heatmap of samtools coverage stats"),
             dcc.Graph(id="samstats"),
             html.H2(children="Choose sample to show results for:"),
@@ -122,14 +136,6 @@ def launch_dashboard(data: FigureData) -> None:
                 },
             ),
             dcc.Graph(figure=p.dip),
-            html.H2(
-                children="--- Mapping Statistics ---",
-                style={
-                    "textAlign": "center",
-                    "color": colors["h2"],
-                    "BackgroundColor": colors["background"],
-                },
-            ),
         ],
     )
     app.run(debug=True)

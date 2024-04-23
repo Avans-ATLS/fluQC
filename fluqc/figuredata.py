@@ -113,6 +113,21 @@ class FigureData:
             "read N50": [],
             "avg quality": [],
         }
+        self.len_qual: dict[str, list] = {
+            "Sample": [],
+            "length": [],
+            "quality": [],
+        }
+
+    def append_len_qual(self, samplename: str, fastq_path: str) -> None:
+        with open(fastq_path) as fq:
+            for record in SeqIO.parse(fq, 'fastq'):
+                self.len_qual['Sample'].append(samplename)
+                self.len_qual['length'].append(len(record.seq))
+                avgq = round((sum(record.letter_annotations['phred_quality']) / len(record.seq)), 1)
+                self.len_qual['quality'].append(avgq)
+
+    
     def append_table_data(
             self, samplename: str, paf_path: str, subtype: str, fastq_path: str
     ) -> None:

@@ -30,6 +30,7 @@ class Plots:
         self.cov: dict[str, Figure] = self.covstats()
         self.depth: dict[str, Figure] = self.cov_histogram()
         self.lengths: dict[str, Figure] = self.readlengths()
+        self.bivariate: dict[str, Figure] = self.len_qual()
 
     def dip_heatmap(self) -> Figure:
         """Render heatmap of DIP percentages
@@ -51,6 +52,28 @@ class Plots:
         )
         return fig
 
+    def len_qual(self) -> dict[str, Figure]:
+        """Render length v.s. quality bivariate plots per sample
+
+        Returns:
+            dict[str, Figure]: bivariate plot
+        """
+        df = DataFrame(self.d.len_qual)
+        callback_options = df['Sample'].unique().tolist()
+
+        d = {}
+        for opt in callback_options:
+            subdf = df[df["Sample"] == opt]
+            fig = px.scatter(subdf, x='length', y='quality')
+            fig.update_layout(
+                title=f"Sample: {opt}",
+                xaxis_title="Read Length",
+                yaxis_title="Read Quality",
+            )
+            d[opt] = fig
+        
+        return d
+    
     def covstats(self) -> dict[str, Figure]:
         """Render covstats heatmaps per statistic
 
