@@ -64,6 +64,25 @@ def launch_dashboard(data: FigureData) -> None:
                     "BackgroundColor": colors["background"],
                 },
             ),
+            dcc.Markdown(
+                children=t.mapping_explanation,
+                style={
+                    "textAlign": "left",
+                    "color": colors["text"],
+                    "BackgroundColor": colors["background"],
+                },
+            ),
+            dcc.Dropdown(list(p.cov.keys()), list(p.cov.keys())[0], id="statistic"),
+            html.H3(children="Heatmap of samtools coverage stats"),
+            dcc.Graph(id="samstats"),
+            html.H2(children="Choose sample to show results for:"),
+            dcc.Dropdown(
+                list(p.lengths.keys()), list(p.lengths.keys())[0], id="sample"
+            ),
+            html.H3(children="Violin plot of segment lengths"),
+            dcc.Graph(id="lengths"),
+            html.H3(children="Read depth across all segments"),
+            dcc.Graph(id="depth"),
             html.H2(
                 children="--- Percentage Putative Defective Interfering Particles ---",
                 style={
@@ -89,25 +108,6 @@ def launch_dashboard(data: FigureData) -> None:
                     "BackgroundColor": colors["background"],
                 },
             ),
-            dcc.Markdown(
-                children=t.mapping_explanation,
-                style={
-                    "textAlign": "left",
-                    "color": colors["text"],
-                    "BackgroundColor": colors["background"],
-                },
-            ),
-            dcc.Dropdown(list(p.cov.keys()), list(p.cov.keys())[0], id="statistic"),
-            html.H3(children="Heatmap of samtools coverage stats"),
-            dcc.Graph(id="samstats"),
-            html.H2(children="Choose sample to show results for:"),
-            dcc.Dropdown(
-                list(p.lengths.keys()), list(p.lengths.keys())[0], id="sample"
-            ),
-            html.H3(children="Violin plot of segment lengths"),
-            dcc.Graph(id="lengths"),
-            html.H3(children="Read depth across all segments"),
-            dcc.Graph(id="depth"),
         ],
     )
-    app.run(debug=False)
+    app.run(debug=True)
