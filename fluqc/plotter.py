@@ -12,7 +12,6 @@ from fluqc.figuredata import FigureData
 
 class Plots:
     """Generate Figures for dashboard"""
-
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )

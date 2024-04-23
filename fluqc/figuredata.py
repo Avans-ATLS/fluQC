@@ -65,7 +65,7 @@ class FigureData:
 
     l: Logger = logging.getLogger("FigureData")
     DIP_RATIO: float = 2.0  # if < alignment length / segment length: putative dip
-    DEPTH_BINSIZE: int = 25  # binsize for depth histogram
+    DEPTH_BINS: int = 50  # binsize for depth histogram
 
     def __init__(self, threads: int) -> None:
         self.t = threads
@@ -213,11 +213,12 @@ class FigureData:
         # calculate rolling average per DEPTH_BINSIZE
         for segment in segments:
             subdf = df[df["segment"] == segment]
+            binsize = int(len(subdf) / self.DEPTH_BINS)
             rolling_avg = (
                 subdf["depth"]
-                .rolling(window=self.DEPTH_BINSIZE)
+                .rolling(window=binsize)
                 .mean()
-                .iloc[:: self.DEPTH_BINSIZE]
+                .iloc[:: binsize]
                 .dropna()
                 .reset_index(drop=True)
             )
@@ -231,7 +232,7 @@ class FigureData:
             for avg in rolling_avg.items():
                 self.depth["Sample"].append(samplename)
                 self.depth["Segment"].append(segment.split("_")[1])
-                self.depth["Position"].append((avg[0] + 1) * self.DEPTH_BINSIZE)
+                self.depth["Position"].append((avg[0] + 1) * binsize)
                 self.depth["RollingAvg"].append(avg[1])
 
             # If segment not in data, append None
