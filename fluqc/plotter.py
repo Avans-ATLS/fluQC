@@ -6,6 +6,7 @@ from plotly.graph_objects import Figure, Scatter
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pandas import DataFrame
+import numpy as np
 
 from fluqc.figuredata import FigureData
 
@@ -142,8 +143,8 @@ class Plots:
                     row=1,
                     col=i,
                 )
-                x_range = [0, segdf["Position"].max() + 10]
-                y_range = [0, subdf["RollingAvg"].max() + 10]
+                x_range = [0, segdf["Position"].max() + 5]
+                y_range = [0, subdf["RollingAvg"].max() + 1]
 
                 fig.update_xaxes(range=x_range, tickangle=45, row=1, col=i)
                 fig.update_yaxes(range=y_range, tickangle=45, row=1, col=i)

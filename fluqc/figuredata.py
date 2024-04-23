@@ -4,6 +4,7 @@ import io
 import multiprocessing as mp
 
 import pandas as pd
+import numpy as np
 from Bio import SeqIO
 
 pd.options.mode.copy_on_write = True
@@ -248,7 +249,7 @@ class FigureData:
                 self.depth["Sample"].append(samplename)
                 self.depth["Segment"].append(segment.split("_")[1])
                 self.depth["Position"].append((avg[0] + 1) * binsize)
-                self.depth["RollingAvg"].append(avg[1])
+                self.depth["RollingAvg"].append(np.log10(avg[1]))
 
             # If segment not in data, append None
             for k, v in self.depth.items():
