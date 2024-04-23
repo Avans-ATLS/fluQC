@@ -64,8 +64,6 @@ if __name__ == "__main__":
         subtype = get_subtype(segments)
         
 
-        unmapped, mapped = run.mapped_reads_analysis()
-        logger.info(f"Percentage of reads unmapped: {(unmapped / (mapped+unmapped)) * 100}")
 
         # check if assignment was unsuccessful
         if segments == None and assignments == None:
@@ -77,13 +75,5 @@ if __name__ == "__main__":
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
 
-    logger.debug(f"Column lengths for dips: {[len(x) for x in data.dips.values()]}")
-    logger.debug(
-        f"Column lengths for covstats: {[len(x) for x in data.covstats.values()]}"
-    )
-    logger.debug(f"Column lengths for depth: {[len(x) for x in data.depth.values()]}")
-    logger.debug(
-        f"Column lengths for lengths: {[len(x) for x in data.readlengths.values()]}"
-    )
 
     launch_dashboard(data)
