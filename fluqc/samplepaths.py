@@ -31,6 +31,8 @@ class SamplePaths:
         self.outsam: str = os.path.join(self.outdir, f"{self.samplename}.sam")
         self.samcov: str = os.path.join(self.outdir, f"{self.samplename}_cov.tsv")
         self.samdepth: str = os.path.join(self.outdir, f"{self.samplename}_depth.tsv")
-        self.unmapped: str = os.path.join(self.outdir, f"{self.samplename}_unmapped.fastq")
+        self.unmapped: str = os.path.join(
+            self.outdir, f"{self.samplename}_unmapped.fastq"
+        )
 
         self.make_directories()

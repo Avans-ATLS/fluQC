@@ -13,6 +13,7 @@ from fluqc.figuredata import FigureData
 
 class Plots:
     """Generate Figures for dashboard"""
+
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )
@@ -60,21 +61,21 @@ class Plots:
             dict[str, Figure]: bivariate plot
         """
         df = DataFrame(self.d.len_qual)
-        callback_options = df['Sample'].unique().tolist()
+        callback_options = df["Sample"].unique().tolist()
 
         d = {}
         for opt in callback_options:
             subdf = df[df["Sample"] == opt]
-            fig = px.scatter(subdf, x='length', y='quality')
+            fig = px.scatter(subdf, x="length", y="quality")
             fig.update_layout(
                 title=f"Sample: {opt}",
                 xaxis_title="Read Length",
                 yaxis_title="Read Quality",
             )
             d[opt] = fig
-        
+
         return d
-    
+
     def covstats(self) -> dict[str, Figure]:
         """Render covstats heatmaps per statistic
 

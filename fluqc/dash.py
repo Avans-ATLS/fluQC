@@ -30,8 +30,8 @@ def launch_dashboard(data: FigureData) -> None:
     @callback(Output("depth", "figure"), Input("sample", "value"))
     def show_depth(value) -> Figure:
         return p.depth[value]
-    
-    @callback(Output("bivariate", 'figure'), Input("qc_sample", 'value'))
+
+    @callback(Output("bivariate", "figure"), Input("qc_sample", "value"))
     def show_bivariate(value) -> Figure:
         return p.bivariate[value]
 
@@ -51,13 +51,12 @@ def launch_dashboard(data: FigureData) -> None:
     table = pd.DataFrame(data.table, columns=None)
     # table.set_index('Sample')
     table: pd.DataFrame = table.transpose()
-    table.columns = table.loc['Sample'].values
-    table.drop('Sample', inplace=True)
+    table.columns = table.loc["Sample"].values
+    table.drop("Sample", inplace=True)
     table.reset_index()
-    table['Statistic'] = table.index
+    table["Statistic"] = table.index
     cols = list(table.columns)
     table = table[[cols[-1]] + cols[:-1]]
-
 
     logger = logging.getLogger("Dashboard")
     logger.info("Starting Dashboard")
@@ -89,9 +88,11 @@ def launch_dashboard(data: FigureData) -> None:
                     "BackgroundColor": colors["background"],
                 },
             ),
-            dash_table.DataTable(table.to_dict('records')),
-            dcc.Dropdown(list(p.bivariate.keys()), list(p.bivariate.keys())[0], id="qc_sample"),
-            dcc.Graph(id='bivariate'),
+            dash_table.DataTable(table.to_dict("records")),
+            dcc.Dropdown(
+                list(p.bivariate.keys()), list(p.bivariate.keys())[0], id="qc_sample"
+            ),
+            dcc.Graph(id="bivariate"),
             dcc.Dropdown(list(p.cov.keys()), list(p.cov.keys())[0], id="statistic"),
             html.H2(
                 children="--- Mapping Statistics ---",

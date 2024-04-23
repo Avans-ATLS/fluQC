@@ -224,10 +224,12 @@ class Wrappers:
                 dict[str, str]: read id: assigned segment
             """
             n_processes = min(self.t, len(df["q_name"].unique()))
-            try: 
+            try:
                 pool = multiprocessing.Pool(processes=n_processes)
             except ValueError as e:
-                self.l.warning(f"No reads to assign, skipping sample {self.p.samplename}")
+                self.l.warning(
+                    f"No reads to assign, skipping sample {self.p.samplename}"
+                )
                 return None
             # create function with fixed df arg
             assign_partial = partial(self.assign_read, df)
@@ -240,7 +242,7 @@ class Wrappers:
             pool.join()
 
             return assignments
-        
+
         df = pd.read_csv(self.p.paf, sep="\t")
         self.l.debug("Computing harmonic means")
         df["h_mean"] = harmonic_mean(df["q_end"] - df["q_start"], df["n_match"])
@@ -248,11 +250,15 @@ class Wrappers:
         start_time = time.time()
         read_assignments = assign_parallel(df)
         if read_assignments == None:
-            return None, None # return none if no reads were assigned
+            return None, None  # return none if no reads were assigned
         segment_counts = pd.Series(read_assignments).value_counts().to_dict()
         end_time = time.time()
-        print(f'{self.p.samplename} took: {end_time-start_time} seconds')
-        self.l.info((f'Counting reads for {self.p.samplename} took: {end_time-start_time} seconds'))
+        print(f"{self.p.samplename} took: {end_time-start_time} seconds")
+        self.l.info(
+            (
+                f"Counting reads for {self.p.samplename} took: {end_time-start_time} seconds"
+            )
+        )
         for k, v in segment_counts.items():
             self.l.debug(f"{k}:\t{v}")
 
@@ -307,6 +313,5 @@ class Wrappers:
                 # keep only subtype with most reads (first in list)
                 all_segments = [s for s in all_segments if s not in na]
                 all_segments.append(segments[0])
-        
-        
+
         return all_segments, read_assignments

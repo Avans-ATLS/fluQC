@@ -9,17 +9,17 @@ from fluqc.samplepaths import SamplePaths
 from fluqc.wrappers import Wrappers
 from fluqc.dash import launch_dashboard
 
+
 def get_subtype(segments: list) -> str:
     try:
-        ha = [x for x in segments if x.split('_')[1] == 'HA'][0].split('_')[-1]
+        ha = [x for x in segments if x.split("_")[1] == "HA"][0].split("_")[-1]
     except:
-        ha = 'Hx'
+        ha = "Hx"
     try:
-        na = [x for x in segments if x.split('_')[1] == 'NA'][0].split('_')[-1]
+        na = [x for x in segments if x.split("_")[1] == "NA"][0].split("_")[-1]
     except:
-        na = 'Nx'
-    return f'{ha}{na}'
-
+        na = "Nx"
+    return f"{ha}{na}"
 
 
 if __name__ == "__main__":
@@ -62,12 +62,10 @@ if __name__ == "__main__":
 
         # get subtype
         subtype = get_subtype(segments)
-        
-
 
         # check if assignment was unsuccessful
         if segments == None and assignments == None:
-            continue # skip current sample
+            continue  # skip current sample
         # append results to FigureData class
         data.append_percent_dips(s.samplename, s.paf, segments)
         data.append_covstats(s.samplename, s.samcov, segments)
@@ -75,6 +73,5 @@ if __name__ == "__main__":
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
-
 
     launch_dashboard(data)

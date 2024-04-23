@@ -22,35 +22,35 @@ class FastqStats:
         nreads: int = 0
         nbases: int = 0
         with open(self.fq) as fq:
-            for record in SeqIO.parse(fq, 'fastq'):
+            for record in SeqIO.parse(fq, "fastq"):
                 nreads += 1
                 nbases += len(record.seq)
         return nreads, nbases
-    
+
     def avg_len(self) -> float:
         total_len: int = 0
         with open(self.fq) as fq:
-            for record in SeqIO.parse(fq, 'fastq'):
+            for record in SeqIO.parse(fq, "fastq"):
                 total_len += len(record.seq)
         return round(total_len / self.nreads, 1)
 
     def avg_qual(self) -> float:
         total_qual: int = 0
         with open(self.fq) as fq:
-            for record in SeqIO.parse(fq, 'fastq'):
-                total_qual += sum(record.letter_annotations['phred_quality'])
+            for record in SeqIO.parse(fq, "fastq"):
+                total_qual += sum(record.letter_annotations["phred_quality"])
         return round(total_qual / self.nbases)
 
     def calculate_read_n50(self) -> int:
         with open(self.fq) as fq:
-            read_lengths = [len(r.seq) for r in SeqIO.parse(fq, 'fastq')]
+            read_lengths = [len(r.seq) for r in SeqIO.parse(fq, "fastq")]
 
         # Sort the read lengths in descending order
         sorted_lengths = sorted(read_lengths, reverse=True)
-        
+
         # Calculate the total number of bases
         total_bases = sum(sorted_lengths)
-        
+
         # Calculate the cumulative sum of read lengths
         cumulative_sum = 0
         for length in sorted_lengths:
@@ -58,7 +58,6 @@ class FastqStats:
             # Check if cumulative sum exceeds half of the total bases
             if cumulative_sum >= total_bases / 2:
                 return length
-
 
 
 class FigureData:
@@ -122,32 +121,33 @@ class FigureData:
 
     def append_len_qual(self, samplename: str, fastq_path: str) -> None:
         with open(fastq_path) as fq:
-            for record in SeqIO.parse(fq, 'fastq'):
-                self.len_qual['Sample'].append(samplename)
-                self.len_qual['length'].append(len(record.seq))
-                avgq = round((sum(record.letter_annotations['phred_quality']) / len(record.seq)), 1)
-                self.len_qual['quality'].append(avgq)
+            for record in SeqIO.parse(fq, "fastq"):
+                self.len_qual["Sample"].append(samplename)
+                self.len_qual["length"].append(len(record.seq))
+                avgq = round(
+                    (sum(record.letter_annotations["phred_quality"]) / len(record.seq)),
+                    1,
+                )
+                self.len_qual["quality"].append(avgq)
 
-    
     def append_table_data(
-            self, samplename: str, paf_path: str, subtype: str, fastq_path: str
+        self, samplename: str, paf_path: str, subtype: str, fastq_path: str
     ) -> None:
-        
-        paf = pd.read_csv(paf_path, sep='\t')
+
+        paf = pd.read_csv(paf_path, sep="\t")
         stats = FastqStats(fastq_path)
 
-        mapped_reads = len(paf['q_name'].unique())
+        mapped_reads = len(paf["q_name"].unique())
         perc_mapped = round(((mapped_reads / stats.nreads) * 100), 1)
-        self.table['Sample'].append(samplename)
-        self.table['Subtype'].append(subtype)
-        self.table['reads'].append(stats.nreads)
-        self.table['bases'].append(stats.nbases)
-        self.table['% mapped'].append(perc_mapped)
-        self.table['avg length'].append(stats.length)
-        self.table['read N50'].append(stats.N50)
-        self.table['avg quality'].append(stats.qual)
-        
-        
+        self.table["Sample"].append(samplename)
+        self.table["Subtype"].append(subtype)
+        self.table["reads"].append(stats.nreads)
+        self.table["bases"].append(stats.nbases)
+        self.table["% mapped"].append(perc_mapped)
+        self.table["avg length"].append(stats.length)
+        self.table["read N50"].append(stats.N50)
+        self.table["avg quality"].append(stats.qual)
+
     def append_percent_dips(
         self, samplename: str, paf_path: str, segments: list[str]
     ) -> None:
@@ -234,7 +234,7 @@ class FigureData:
                 subdf["depth"]
                 .rolling(window=binsize)
                 .mean()
-                .iloc[:: binsize]
+                .iloc[::binsize]
                 .dropna()
                 .reset_index(drop=True)
             )
