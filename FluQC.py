@@ -11,6 +11,15 @@ from fluqc.dash import launch_dashboard
 
 
 def get_subtype(segments: list) -> str:
+    """From a list of unique assigned reference segments, assign the subtype.
+    If HA and/or NA subtype cannot be assigned, Hx and Nx will be returned, respectively.
+
+    Args:
+        segments (list): assigned segments
+
+    Returns:
+        str: HxNx, where x is either a subtype number, or x if not assigned
+    """
     try:
         ha = [x for x in segments if x.split("_")[1] == "HA"][0].split("_")[-1]
     except:

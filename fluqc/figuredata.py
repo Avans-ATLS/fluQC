@@ -11,6 +11,8 @@ pd.options.mode.copy_on_write = True
 
 
 class FastqStats:
+    """Read statistics from a fastq file"""
+
     def __init__(self, fastq_path: str) -> None:
         self.fq = fastq_path
         self.nreads, self.nbases = self.count_reads()
@@ -18,7 +20,12 @@ class FastqStats:
         self.qual = self.avg_qual()
         self.N50 = self.calculate_read_n50()
 
-    def count_reads(self) -> int:
+    def count_reads(self) -> tuple[int, int]:
+        """Count number of reads and bases in fastq file
+
+        Returns:
+            tuple[int, int]: #reads, #bases
+        """
         nreads: int = 0
         nbases: int = 0
         with open(self.fq) as fq:
@@ -28,6 +35,11 @@ class FastqStats:
         return nreads, nbases
 
     def avg_len(self) -> float:
+        """Compute the average read length of a fastq file
+
+        Returns:
+            float: average read length
+        """
         total_len: int = 0
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
@@ -35,22 +47,31 @@ class FastqStats:
         return round(total_len / self.nreads, 1)
 
     def avg_qual(self) -> float:
+        """Compute the average base quality of a fastq file
+        (sum of all q scores / # bases)
+
+        Returns:
+            float: average base quality
+        """
         total_qual: int = 0
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
                 total_qual += sum(record.letter_annotations["phred_quality"])
-        return round(total_qual / self.nbases)
+        return round(total_qual / self.nbases, 1)
 
     def calculate_read_n50(self) -> int:
+        """Compute read N50 for a fastq file
+
+        Returns:
+            int: read N50
+        """
         with open(self.fq) as fq:
             read_lengths = [len(r.seq) for r in SeqIO.parse(fq, "fastq")]
 
         # Sort the read lengths in descending order
         sorted_lengths = sorted(read_lengths, reverse=True)
-
         # Calculate the total number of bases
         total_bases = sum(sorted_lengths)
-
         # Calculate the cumulative sum of read lengths
         cumulative_sum = 0
         for length in sorted_lengths:
@@ -120,6 +141,12 @@ class FigureData:
         }
 
     def append_len_qual(self, samplename: str, fastq_path: str) -> None:
+        """Append the read length and quality of a sample to dict for bivariate visualization
+
+        Args:
+            samplename (str): name of sample
+            fastq_path (str): path to samples fastq file
+        """
         with open(fastq_path) as fq:
             for record in SeqIO.parse(fq, "fastq"):
                 self.len_qual["Sample"].append(samplename)
@@ -133,7 +160,14 @@ class FigureData:
     def append_table_data(
         self, samplename: str, paf_path: str, subtype: str, fastq_path: str
     ) -> None:
+        """Append general statistics to dict for a sample for dashboard datatable
 
+        Args:
+            samplename (str): name of sample
+            paf_path (str): path to its paf file
+            subtype (str): subtype called from mapping results
+            fastq_path (str): path to fastq file
+        """
         paf = pd.read_csv(paf_path, sep="\t")
         stats = FastqStats(fastq_path)
 
@@ -225,7 +259,6 @@ class FigureData:
             segments (list[str]): Assigned segments
         """
         df = pd.read_csv(depth_path, sep="\t")
-
         # calculate rolling average per DEPTH_BINSIZE
         for segment in segments:
             subdf = df[df["segment"] == segment]
@@ -238,7 +271,6 @@ class FigureData:
                 .dropna()
                 .reset_index(drop=True)
             )
-
             # start position 0 at a coverage of 0
             self.depth["Sample"].append(samplename)
             self.depth["Segment"].append(segment.split("_")[1])
@@ -250,7 +282,6 @@ class FigureData:
                 self.depth["Segment"].append(segment.split("_")[1])
                 self.depth["Position"].append((avg[0] + 1) * binsize)
                 self.depth["RollingAvg"].append(np.log10(avg[1]))
-
             # If segment not in data, append None
             for k, v in self.depth.items():
                 if len(v) < len(self.depth["Sample"]):

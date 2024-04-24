@@ -12,6 +12,31 @@ from fluqc.plotter import Plots
 from fluqc.texts import DashboardText
 
 
+def read_datatable(d: dict) -> DataFrame:
+    """Read
+
+    Args:
+        d (dict): dictionary of data (from Figuredata)
+
+    Returns:
+        DataFrame: data to show in dashboard table
+    """
+    # create df, transpose to set samples to cols
+    table = pd.DataFrame(d, columns=None)
+    table: pd.DataFrame = table.transpose()
+    # set column labels as sample, drop sample row
+    table.columns = table.loc["Sample"].values
+    table.drop("Sample", inplace=True)
+    table.reset_index()
+    # create a new column from the df index
+    table["Statistic"] = table.index
+    cols = list(table.columns)
+    # move the statistics column from last to first
+    table = table[[cols[-1]] + cols[:-1]]
+
+    return table
+
+
 def launch_dashboard(data: FigureData) -> None:
     """Create html layout and launch QC dashboard
 
@@ -46,21 +71,11 @@ def launch_dashboard(data: FigureData) -> None:
 
     p = Plots(data)
     t = DashboardText()
-
-    # create table for dashboard
-    table = pd.DataFrame(data.table, columns=None)
-    # table.set_index('Sample')
-    table: pd.DataFrame = table.transpose()
-    table.columns = table.loc["Sample"].values
-    table.drop("Sample", inplace=True)
-    table.reset_index()
-    table["Statistic"] = table.index
-    cols = list(table.columns)
-    table = table[[cols[-1]] + cols[:-1]]
+    table = read_datatable(data.table)
 
     logger = logging.getLogger("Dashboard")
     logger.info("Starting Dashboard")
-    app = Dash(__name__)
+    app = Dash("FluQC")
     app.layout = html.Div(
         style={"BackgroundColor": colors["background"]},
         children=[
