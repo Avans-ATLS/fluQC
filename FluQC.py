@@ -3,6 +3,7 @@ import glob
 import os
 import logging.config
 import yaml
+import pickle
 
 from fluqc.figuredata import FigureData
 from fluqc.samplepaths import SamplePaths
@@ -30,26 +31,11 @@ def get_subtype(segments: list) -> str:
         na = "Nx"
     return f"{ha}{na}"
 
+def write_figuredata(data: FigureData, outfile: str):
+    with open(outfile, 'wb') as out:
+        pickle.dump(data, out, pickle.HIGHEST_PROTOCOL)
 
-if __name__ == "__main__":
-    with open("config/logging_config.yml", "rt") as f:
-        config = yaml.safe_load(f.read())
-    logging.config.dictConfig(config)
-
-    logger = logging.getLogger("FluQC")
-    parser = argparse.ArgumentParser(
-        "FluQC.py",
-        description="Launch a QC dashboard for an influenza sequencing run",
-        epilog="Developed by Sander Boden (s.boden1@avans.nl)",
-    )
-    parser.add_argument(
-        "fastq", type=str, help="path to directory of fastqs to analyze"
-    )
-    parser.add_argument("database", type=str, help="path to IRMA database")
-    parser.add_argument("outdir", type=str, help="Path to directory to place output")
-    parser.add_argument("--threads", type=int, default=2, help="Number of threads")
-    args = parser.parse_args()
-
+def run_preprocessing(args):
     # init SamplePaths classes for each fastq file
     samples = [
         SamplePaths(x, args.database, args.outdir)
@@ -60,6 +46,7 @@ if __name__ == "__main__":
     # init FigureData class
     data = FigureData(args.threads)
 
+    # analyze each dataset and collect results
     for s in samples:
         # init Wrappers class for sample
         run = Wrappers(s, args.threads)
@@ -82,5 +69,36 @@ if __name__ == "__main__":
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
+    write_figuredata(data, os.path.join(args.outdir, 'dashboard_data.pkl'))
 
+def dashboard(args):
+    with open(args.datapath, 'rb') as input:
+        data = pickle.load(input)
     launch_dashboard(data)
+
+
+if __name__ == "__main__":
+    with open("config/logging_config.yml", "rt") as f:
+        config = yaml.safe_load(f.read())
+    logging.config.dictConfig(config)
+
+    logger = logging.getLogger("FluQC")
+    root_parser = argparse.ArgumentParser(
+        "FluQC",
+        description="Launch a QC dashboard for an influenza sequencing run",
+        epilog="Developed by Sander Boden @ Avans-ATLS (s.boden1@avans.nl)",
+    )
+    subparsers = root_parser.add_subparsers(title='commands', help='Valid Subcommands')
+    prep_parser = subparsers.add_parser('preprocess', help='Analyze fastq files and prepare data for dashboard')
+    prep_parser.add_argument("fastq", type=str, help="path to directory of fastqs to analyze")
+    prep_parser.add_argument("database", type=str, help="path to IRMA database")
+    prep_parser.add_argument("outdir", type=str, help="Path to directory to place output")
+    prep_parser.add_argument("--threads", type=int, default=2, help="Number of threads")
+    prep_parser.set_defaults(func=run_preprocessing)
+
+    dash_parser = subparsers.add_parser('dashboard', help='Launch dashboard')
+    dash_parser.add_argument("datapath", type=str, help="path to directory containing data csv's. (outdir from preprocess subcommand)")
+    dash_parser.set_defaults(func=dashboard)
+
+    args = root_parser.parse_args()
+    args.func(args)
