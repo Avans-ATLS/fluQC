@@ -56,7 +56,7 @@ class FastqStats:
         total_qual: int = 0
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
-                total_qual += sum(record.letter_annotations["phred_quality"])
+                total_qual += sum([x-15 for x in record.letter_annotations["phred_quality"]]) # conversion for nanopore data
         return round(total_qual / self.nbases, 1)
 
     def calculate_read_n50(self) -> int:
