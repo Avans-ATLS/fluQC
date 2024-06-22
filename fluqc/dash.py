@@ -33,6 +33,8 @@ def read_datatable(d: dict) -> DataFrame:
     cols = list(table.columns)
     # move the statistics column from last to first
     table = table[[cols[-1]] + cols[:-1]]
+    # transpose the table
+    table = table.transpose()
 
     return table
 
