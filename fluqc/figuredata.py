@@ -152,7 +152,7 @@ class FigureData:
                 self.len_qual["Sample"].append(samplename)
                 self.len_qual["length"].append(len(record.seq))
                 avgq = round(
-                    (sum(record.letter_annotations["phred_quality"]) / len(record.seq)),
+                    (sum([x-15 for x in record.letter_annotations["phred_quality"]]) / len(record.seq)),
                     1,
                 )
                 self.len_qual["quality"].append(avgq)

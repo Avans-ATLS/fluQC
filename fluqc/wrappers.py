@@ -57,6 +57,7 @@ class Wrappers:
             f"samtools sort -O SAM -",
             stdin=map.stdout,
             stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
         )
         # split stdout to file and stdout

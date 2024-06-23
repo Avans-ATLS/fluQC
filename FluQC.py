@@ -8,7 +8,7 @@ import pickle
 from fluqc.figuredata import FigureData
 from fluqc.samplepaths import SamplePaths
 from fluqc.wrappers import Wrappers
-from fluqc.dash import launch_dashboard
+from fluqc.dashboard.layout import launch_dashboard
 
 
 def get_subtype(segments: list) -> str:
