@@ -60,3 +60,6 @@ Choose from one of the following statistics to see the results in the heatmap:
 **meanbaseq**: The average quality of reads covering the segment.
 **meanmapq**: The average mapping quality of all mapped reads.
 """
+    kmer_frequency: str = """
+
+"""

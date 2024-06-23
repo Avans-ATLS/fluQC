@@ -105,6 +105,7 @@ def launch_dashboard(data: FigureData) -> None:
                     dbc.NavLink("Mapping Statistics", href='/page-mapping', active='exact'),
                     dbc.NavLink("In-depth Sample view", href='/page-sample', active='exact'),
                     dbc.NavLink("DIP's", href='/page-dip', active='exact'),
+                    dbc.NavLink("Kmer Analysis", href='/page-kmer', active='exact'),
                 ],
                 vertical=True,
                 pills=True,
@@ -116,10 +117,7 @@ def launch_dashboard(data: FigureData) -> None:
     HOMEPAGE = html.Div(
     [
         html.Br(),
-        html.H1(
-            children="FluQC dashboard",
-
-        ),
+        html.H1("FluQC dashboard"),
         html.Br(),
         html.H2('Introduction:'),
         dcc.Markdown(DashboardText.introduction),
@@ -132,9 +130,7 @@ def launch_dashboard(data: FigureData) -> None:
     SUMMARY_PAGE = html.Div(
         [   
             html.Br(),    
-            dcc.Markdown(
-                children=t.table_text
-            ),
+            dcc.Markdown(t.table_text),
             html.Br(),
             dbc.Table.from_dataframe(read_datatable(data.table), striped=True, bordered=True, hover=True)
         ],
@@ -178,11 +174,23 @@ def launch_dashboard(data: FigureData) -> None:
         [
             html.H1('Percentage Defective interfering particles'),
             html.Br(),
-            dcc.Markdown(children=t.dip_explanation),
+            dcc.Markdown(t.dip_explanation),
             html.Br(),
             html.H5('DIP Heatmap'),
             html.Br(),
             dcc.Graph(figure=p.dip),
+        ],
+        style=CONTENT
+    )
+    KMER_PAGE = html.Div(
+        [
+            html.H1('Read Kmerfrequency Analysis'),
+            html.Br(),
+            dcc.Markdown(t.kmer_frequency),
+            html.Br(),
+            html.H5('3D PCA of Kmerfrequecies'),
+            html.Br(),
+            dcc.Graph(figure=p.kmer),
         ],
         style=CONTENT
     )
@@ -209,6 +217,8 @@ def launch_dashboard(data: FigureData) -> None:
             return SAMPLE_PAGE
         elif pathname == '/page-dip':
             return DIP_PAGE
+        elif pathname == '/page-kmer':
+            return KMER_PAGE
         else:
             return html.Div(
             [
@@ -216,6 +226,7 @@ def launch_dashboard(data: FigureData) -> None:
                 html.Hr(),
                 html.P(f"The pathname {pathname} was not recognised..."),
             ],
+            style=CONTENT
             )
         
     app.run(debug=True)

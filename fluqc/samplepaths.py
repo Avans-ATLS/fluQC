@@ -34,5 +34,6 @@ class SamplePaths:
         self.unmapped: str = os.path.join(
             self.outdir, f"{self.samplename}_unmapped.fastq"
         )
+        self.kmerfreqs: str = os.path.join(self.outdir, f'{self.samplename}_kmer.csv')
 
         self.make_directories()

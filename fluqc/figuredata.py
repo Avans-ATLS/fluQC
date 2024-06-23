@@ -139,6 +139,16 @@ class FigureData:
             "length": [],
             "quality": [],
         }
+        self.kmerfreq: pd.DataFrame
+    
+    def prepare_kmer_data(self, df: pd.DataFrame, assignments: dict[str, str]):
+        def get_assignment(x: pd.Series):
+            if x.name in assignments:
+                return assignments[x.name]
+            else:
+                return 'unmapped'
+        df['mapped_to'] = df.apply(lambda x: get_assignment(x), axis=1)
+        self.kmerfreq = df
 
     def append_len_qual(self, samplename: str, fastq_path: str) -> None:
         """Append the read length and quality of a sample to dict for bivariate visualization
