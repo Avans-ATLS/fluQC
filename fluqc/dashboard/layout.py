@@ -93,10 +93,10 @@ def launch_dashboard(data: FigureData) -> None:
 
     sidebar_element = html.Div(
         [
-            html.H2('FluQC', className="display-4"),
+            html.H1('FluQC', className="text-primary"),
             html.Hr(),
             html.P(
-                'Avans-ATLS', className='lead'
+                'Avans-ATLS', className='text-primary-emphasis'
             ),
             dbc.Nav(
                 [
@@ -117,7 +117,7 @@ def launch_dashboard(data: FigureData) -> None:
     HOMEPAGE = html.Div(
     [
         html.Br(),
-        html.H1("FluQC dashboard"),
+        html.H1("FluQC dashboard", className='text-primary'),
         html.Br(),
         html.H2('Introduction:'),
         dcc.Markdown(DashboardText.introduction),

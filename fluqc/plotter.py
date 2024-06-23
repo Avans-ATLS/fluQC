@@ -2,7 +2,7 @@ import logging
 from functools import partial
 from dash import Dash, html, dcc, callback, Output, Input
 import plotly.express as px
-from plotly.graph_objects import Figure, Scatter
+from plotly.graph_objects import Figure
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pandas import DataFrame
@@ -17,14 +17,8 @@ class Plots:
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )
-    colors = {
-        "background": "#FFF7F0",
-        "h1": "#009498",
-        "h2": "#F2852B",
-        "red": "#C6002A",
-        "text": "#000000",
-        "white": "#FFFFFF",
-    }
+    template = 'plotly'
+    marker_color = Figure().layout['template']['layout']['colorway'][3]
 
     def __init__(self, data: FigureData):
         self.d = data
@@ -50,8 +44,7 @@ class Plots:
             title=f"Heatmap of % putative DIPs",
             xaxis_title="Sample",
             yaxis_title="Segment",
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
+            template=self.template,
         )
         return fig
 
@@ -67,11 +60,14 @@ class Plots:
         d = {}
         for opt in callback_options:
             subdf = df[df["Sample"] == opt]
-            fig = px.scatter(subdf, x="length", y="quality")
+            fig = px.scatter(subdf, x="length", y="quality", template=self.template)
             fig.update_layout(
                 title=f"Sample: {opt}",
                 xaxis_title="Read Length",
                 yaxis_title="Read Quality",
+            )
+            fig.update_traces(
+                marker=dict(color=self.marker_color, size=3, opacity=0.8)
             )
             d[opt] = fig
 
@@ -98,8 +94,7 @@ class Plots:
                 title=f"Heatmap of: {opt}",
                 xaxis_title="Sample",
                 yaxis_title="Segment",
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
+                template=self.template,
             )
             d[opt] = fig
 
@@ -140,7 +135,7 @@ class Plots:
                         y=segdf["RollingAvg"],
                         name=segment,
                         opacity=1,
-                        marker_color=self.colors["h1"],
+                        marker_color=self.marker_color,
                     ),
                     row=1,
                     col=i,
@@ -155,9 +150,7 @@ class Plots:
                 title=f"Segment coverage: {s}",
                 xaxis_title="Position",
                 yaxis_title="Read depth",
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font_color=self.colors["text"],
+                template=self.template
             )
             d[s] = fig
 
@@ -180,14 +173,14 @@ class Plots:
                 subdf,
                 x="Segment",
                 y="ReadLength",
-                color_discrete_sequence=[self.colors["h1"]],
             )
+            fig.update_traces(marker=dict(color=self.marker_color, size=3, opacity=0.8))
             fig.add_trace(
-                Scatter(
+                go.Scatter(
                     x=list(self.segment_lengths.keys()),
                     y=list(self.segment_lengths.values()),
                     mode="markers",
-                    fillcolor=self.colors["h1"],
+                    fillcolor='rgb(255,0,0)',
                     name="Expected segment size",
                 )
             )
@@ -195,13 +188,11 @@ class Plots:
                 title=f"Segment depth: {s}",
                 xaxis_title="Position",
                 yaxis_title="Read depth (log10)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font_color=self.colors["text"],
+                template=self.template,
             )
             d[s] = fig
 
         return d
 
     def kmerfreq_PCA(self):
-        return px.scatter_3d(self.d.kmerfreq, x='PC1', y='PC2', z='PC3', color='mapped_to')
+        return px.scatter_3d(self.d.kmerfreq, x='PC1', y='PC2', z='PC3', color='mapped_to', template=self.template)
