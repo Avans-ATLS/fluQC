@@ -56,7 +56,9 @@ class FastqStats:
         total_qual: int = 0
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
-                total_qual += sum([x-15 for x in record.letter_annotations["phred_quality"]]) # conversion for nanopore data
+                total_qual += sum(
+                    [x - 15 for x in record.letter_annotations["phred_quality"]]
+                )  # conversion for nanopore data
         return round(total_qual / self.nbases, 1)
 
     def calculate_read_n50(self) -> int:
@@ -140,14 +142,15 @@ class FigureData:
             "quality": [],
         }
         self.kmerfreq: pd.DataFrame
-    
+
     def prepare_kmer_data(self, df: pd.DataFrame, assignments: dict[str, str]):
         def get_assignment(x: pd.Series):
             if x.name in assignments:
                 return assignments[x.name]
             else:
-                return 'unmapped'
-        df['mapped_to'] = df.apply(lambda x: get_assignment(x), axis=1)
+                return "unmapped"
+
+        df["mapped_to"] = df.apply(lambda x: get_assignment(x), axis=1)
         self.kmerfreq = df
 
     def append_len_qual(self, samplename: str, fastq_path: str) -> None:
@@ -162,8 +165,13 @@ class FigureData:
                 self.len_qual["Sample"].append(samplename)
                 self.len_qual["length"].append(len(record.seq))
                 avgq = round(
-                    (sum([x-15 for x in record.letter_annotations["phred_quality"]]) / len(record.seq)),
-                    1,
+                    number=(
+                        sum(
+                            [x - 15 for x in record.letter_annotations["phred_quality"]]
+                        )
+                        / len(record.seq)
+                    ),
+                    ndigits=1,
                 )
                 self.len_qual["quality"].append(avgq)
 

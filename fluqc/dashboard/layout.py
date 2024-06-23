@@ -14,7 +14,6 @@ from fluqc.plotter import Plots
 from fluqc.dashboard.texts import DashboardText
 
 
-
 def read_datatable(d: dict) -> DataFrame:
     """Read
 
@@ -41,21 +40,20 @@ def read_datatable(d: dict) -> DataFrame:
 
     return table
 
+
 SIDEBAR = {
-    'position': 'fixed',
-    'top': 0,
-    'left': 0,
-    'bottom': 0,
-    'width': "16rem",
-    'padding': '2rem 1rem',
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
 }
 CONTENT = {
-    'margin-left': "18rem",
-    'margin-right': "2rem",
-    'padding': '2rem 1rem',
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
 }
-
-
 
 
 def launch_dashboard(data: FigureData) -> None:
@@ -64,7 +62,11 @@ def launch_dashboard(data: FigureData) -> None:
     Args:
         data (FigureData): instance of FigureData class containing data to plot
     """
-    app = Dash("FluQC", external_stylesheets=[dbc.themes.PULSE], suppress_callback_exceptions=True) # spacelab/pulse are nice
+    app = Dash(
+        "FluQC",
+        external_stylesheets=[dbc.themes.PULSE],
+        suppress_callback_exceptions=True,
+    )  # spacelab/pulse are nice
 
     # callbacks for interaction
     @callback(Output("samstats", "figure"), [Input("statistic", "value")])
@@ -83,29 +85,29 @@ def launch_dashboard(data: FigureData) -> None:
     def show_bivariate(value) -> Figure:
         return p.bivariate[value]
 
-
     p = Plots(data)
     t = DashboardText()
 
     logger = logging.getLogger("Dashboard")
     logger.info("Starting Dashboard")
-    
 
     sidebar_element = html.Div(
         [
-            html.H1('FluQC', className="text-primary"),
+            html.H1("FluQC", className="text-primary"),
             html.Hr(),
-            html.P(
-                'Avans-ATLS', className='text-primary-emphasis'
-            ),
+            html.P("Avans-ATLS", className="text-primary-emphasis"),
             dbc.Nav(
                 [
-                    dbc.NavLink("Home", href='/', active='exact'),
+                    dbc.NavLink("Home", href="/", active="exact"),
                     dbc.NavLink("Summary", href="/page-summary", active="exact"),
-                    dbc.NavLink("Mapping Statistics", href='/page-mapping', active='exact'),
-                    dbc.NavLink("In-depth Sample view", href='/page-sample', active='exact'),
-                    dbc.NavLink("DIP's", href='/page-dip', active='exact'),
-                    dbc.NavLink("Kmer Analysis", href='/page-kmer', active='exact'),
+                    dbc.NavLink(
+                        "Mapping Statistics", href="/page-mapping", active="exact"
+                    ),
+                    dbc.NavLink(
+                        "In-depth Sample view", href="/page-sample", active="exact"
+                    ),
+                    dbc.NavLink("DIP's", href="/page-dip", active="exact"),
+                    dbc.NavLink("Kmer Analysis", href="/page-kmer", active="exact"),
                 ],
                 vertical=True,
                 pills=True,
@@ -115,26 +117,28 @@ def launch_dashboard(data: FigureData) -> None:
     )
 
     HOMEPAGE = html.Div(
-    [
-        html.Br(),
-        html.H1("FluQC dashboard", className='text-primary'),
-        html.Br(),
-        html.H2('Introduction:'),
-        dcc.Markdown(DashboardText.introduction),
-        html.Br(),
-        html.H4('Epilogue'),
-        dcc.Markdown(DashboardText.epilogue),
-    ],
-    style=CONTENT
+        [
+            html.Br(),
+            html.H1("FluQC dashboard", className="text-primary"),
+            html.Br(),
+            html.H2("Introduction:"),
+            dcc.Markdown(DashboardText.introduction),
+            html.Br(),
+            html.H4("Epilogue"),
+            dcc.Markdown(DashboardText.epilogue),
+        ],
+        style=CONTENT,
     )
     SUMMARY_PAGE = html.Div(
-        [   
-            html.Br(),    
+        [
+            html.Br(),
             dcc.Markdown(t.table_text),
             html.Br(),
-            dbc.Table.from_dataframe(read_datatable(data.table), striped=True, bordered=True, hover=True)
+            dbc.Table.from_dataframe(
+                read_datatable(data.table), striped=True, bordered=True, hover=True
+            ),
         ],
-        style=CONTENT
+        style=CONTENT,
     )
     MAPPING_PAGE = html.Div(
         [
@@ -147,65 +151,65 @@ def launch_dashboard(data: FigureData) -> None:
             html.Br(),
             dcc.Graph(id="samstats"),
         ],
-        style=CONTENT
+        style=CONTENT,
     )
     SAMPLE_PAGE = html.Div(
         [
             html.Br(),
-            html.H1('In-depth Sample view'),
+            html.H1("In-depth Sample view"),
             html.Br(),
-            html.H4('Choose a sample to view figures'),
+            html.H4("Choose a sample to view figures"),
             dcc.Dropdown(
                 list(p.bivariate.keys()), list(p.bivariate.keys())[0], id="sample"
             ),
             html.Br(),
-            html.H5('Read length v.s average quality'),
+            html.H5("Read length v.s average quality"),
             dcc.Graph(id="bivariate"),
             html.Br(),
-            html.H5('Read lenghts per sample'),
+            html.H5("Read lenghts per sample"),
             dcc.Graph(id="lengths"),
             html.Br(),
-            html.H5('Read depth histogram'),
+            html.H5("Read depth histogram"),
             dcc.Graph(id="depth"),
         ],
-        style=CONTENT
+        style=CONTENT,
     )
     DIP_PAGE = html.Div(
         [
-            html.H1('Percentage Defective interfering particles'),
+            html.H1("Percentage Defective interfering particles"),
             html.Br(),
             dcc.Markdown(t.dip_explanation),
             html.Br(),
-            html.H5('DIP Heatmap'),
+            html.H5("DIP Heatmap"),
             html.Br(),
             dcc.Graph(figure=p.dip),
         ],
-        style=CONTENT
+        style=CONTENT,
     )
     KMER_PAGE = html.Div(
         [
-            html.H1('Read Kmerfrequency Analysis'),
+            html.H1("Read Kmerfrequency Analysis"),
             html.Br(),
             dcc.Markdown(t.kmer_frequency),
             html.Br(),
-            html.H5('3D PCA of Kmerfrequecies'),
+            html.H5("3D PCA of Kmerfrequecies"),
             html.Br(),
             dcc.Graph(figure=p.kmer),
         ],
-        style=CONTENT
+        style=CONTENT,
     )
 
-    content = html.Div(id='page-content')
-    app.layout = html.Div( # new version
+    content = html.Div(id="page-content")
+    app.layout = html.Div(  # new version
         [
-            dcc.Location(id='url'),
+            dcc.Location(id="url"),
             sidebar_element,
             content,
         ]
     )
 
     # callback for showing pages
-    @app.callback(Output('page-content', 'children'), [Input("url", 'pathname')])
+    @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def render_page(pathname):
         if pathname == "/":
             return HOMEPAGE
@@ -213,20 +217,20 @@ def launch_dashboard(data: FigureData) -> None:
             return SUMMARY_PAGE
         elif pathname == "/page-mapping":
             return MAPPING_PAGE
-        elif pathname == '/page-sample':
+        elif pathname == "/page-sample":
             return SAMPLE_PAGE
-        elif pathname == '/page-dip':
+        elif pathname == "/page-dip":
             return DIP_PAGE
-        elif pathname == '/page-kmer':
+        elif pathname == "/page-kmer":
             return KMER_PAGE
         else:
             return html.Div(
-            [
-                html.H1("404: Not found", className="text-danger"),
-                html.Hr(),
-                html.P(f"The pathname {pathname} was not recognised..."),
-            ],
-            style=CONTENT
+                [
+                    html.H1("404: Not found", className="text-danger"),
+                    html.Hr(),
+                    html.P(f"The pathname {pathname} was not recognised..."),
+                ],
+                style=CONTENT,
             )
-        
+
     app.run(debug=True)

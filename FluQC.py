@@ -31,9 +31,11 @@ def get_subtype(segments: list) -> str:
         na = "Nx"
     return f"{ha}{na}"
 
+
 def write_figuredata(data: FigureData, outfile: str):
-    with open(outfile, 'wb') as out:
+    with open(outfile, "wb") as out:
         pickle.dump(data, out, pickle.HIGHEST_PROTOCOL)
+
 
 def run_preprocessing(args):
     # init SamplePaths classes for each fastq file
@@ -69,14 +71,15 @@ def run_preprocessing(args):
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
-        logger.info('Generating Kmerfrequencies')
+        logger.info("Generating Kmerfrequencies")
         kmerfreqs(s.fastq, s.kmerfreqs, k=5)
         kmerdf = kmerPCA(s.kmerfreqs)
         data.prepare_kmer_data(kmerdf, assignments)
-    write_figuredata(data, os.path.join(args.outdir, 'dashboard_data.pkl'))
+    write_figuredata(data, os.path.join(args.outdir, "dashboard_data.pkl"))
+
 
 def dashboard(args):
-    with open(args.datapath, 'rb') as input:
+    with open(args.datapath, "rb") as input:
         data = pickle.load(input)
     launch_dashboard(data)
 
@@ -92,16 +95,26 @@ if __name__ == "__main__":
         description="Launch a QC dashboard for an influenza sequencing run",
         epilog="Developed by Sander Boden @ Avans-ATLS (s.boden1@avans.nl)",
     )
-    subparsers = root_parser.add_subparsers(title='commands', help='Valid Subcommands')
-    prep_parser = subparsers.add_parser('preprocess', help='Analyze fastq files and prepare data for dashboard')
-    prep_parser.add_argument("fastq", type=str, help="path to directory of fastqs to analyze")
+    subparsers = root_parser.add_subparsers(title="commands", help="Valid Subcommands")
+    prep_parser = subparsers.add_parser(
+        "preprocess", help="Analyze fastq files and prepare data for dashboard"
+    )
+    prep_parser.add_argument(
+        "fastq", type=str, help="path to directory of fastqs to analyze"
+    )
     prep_parser.add_argument("database", type=str, help="path to IRMA database")
-    prep_parser.add_argument("outdir", type=str, help="Path to directory to place output")
+    prep_parser.add_argument(
+        "outdir", type=str, help="Path to directory to place output"
+    )
     prep_parser.add_argument("--threads", type=int, default=2, help="Number of threads")
     prep_parser.set_defaults(func=run_preprocessing)
 
-    dash_parser = subparsers.add_parser('dashboard', help='Launch dashboard')
-    dash_parser.add_argument("datapath", type=str, help="path to directory containing data csv's. (outdir from preprocess subcommand)")
+    dash_parser = subparsers.add_parser("dashboard", help="Launch dashboard")
+    dash_parser.add_argument(
+        "datapath",
+        type=str,
+        help="path to directory containing data csv's. (outdir from preprocess subcommand)",
+    )
     dash_parser.set_defaults(func=dashboard)
 
     args = root_parser.parse_args()

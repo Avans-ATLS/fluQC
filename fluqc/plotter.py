@@ -17,8 +17,8 @@ class Plots:
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )
-    template = 'plotly'
-    marker_color = Figure().layout['template']['layout']['colorway'][3]
+    template = "plotly"
+    marker_color = Figure().layout["template"]["layout"]["colorway"][3]
 
     def __init__(self, data: FigureData):
         self.d = data
@@ -66,9 +66,7 @@ class Plots:
                 xaxis_title="Read Length",
                 yaxis_title="Read Quality",
             )
-            fig.update_traces(
-                marker=dict(color=self.marker_color, size=3, opacity=0.8)
-            )
+            fig.update_traces(marker=dict(color=self.marker_color, size=3, opacity=0.8))
             d[opt] = fig
 
         return d
@@ -150,7 +148,7 @@ class Plots:
                 title=f"Segment coverage: {s}",
                 xaxis_title="Position",
                 yaxis_title="Read depth",
-                template=self.template
+                template=self.template,
             )
             d[s] = fig
 
@@ -180,7 +178,7 @@ class Plots:
                     x=list(self.segment_lengths.keys()),
                     y=list(self.segment_lengths.values()),
                     mode="markers",
-                    fillcolor='rgb(255,0,0)',
+                    fillcolor="rgb(255,0,0)",
                     name="Expected segment size",
                 )
             )
@@ -195,4 +193,11 @@ class Plots:
         return d
 
     def kmerfreq_PCA(self):
-        return px.scatter_3d(self.d.kmerfreq, x='PC1', y='PC2', z='PC3', color='mapped_to', template=self.template)
+        return px.scatter_3d(
+            self.d.kmerfreq,
+            x="PC1",
+            y="PC2",
+            z="PC3",
+            color="mapped_to",
+            template=self.template,
+        )

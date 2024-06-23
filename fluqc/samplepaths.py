@@ -25,7 +25,7 @@ class SamplePaths:
         self.l.info(f"Creating instance for {os.path.basename(fastq)}")
         self.fastq: str = os.path.abspath(fastq)
         self.samplename: str = os.path.basename(fastq).replace(".fastq", "")
-        self.outdir = os.path.join(os.path.abspath(outdir), 'wd/', self.samplename)
+        self.outdir = os.path.join(os.path.abspath(outdir), "wd/", self.samplename)
         self.db = os.path.abspath(db)
         self.paf: str = os.path.join(self.outdir, f"{self.samplename}.paf")
         self.outsam: str = os.path.join(self.outdir, f"{self.samplename}.sam")
@@ -34,6 +34,6 @@ class SamplePaths:
         self.unmapped: str = os.path.join(
             self.outdir, f"{self.samplename}_unmapped.fastq"
         )
-        self.kmerfreqs: str = os.path.join(self.outdir, f'{self.samplename}_kmer.csv')
+        self.kmerfreqs: str = os.path.join(self.outdir, f"{self.samplename}_kmer.csv")
 
         self.make_directories()
