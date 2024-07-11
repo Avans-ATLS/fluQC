@@ -11,27 +11,6 @@ from fluqc.wrappers import Wrappers
 from fluqc.dashboard.layout import launch_dashboard
 
 
-def get_subtype(segments: list) -> str:
-    """From a list of unique assigned reference segments, assign the subtype.
-    If HA and/or NA subtype cannot be assigned, Hx and Nx will be returned, respectively.
-
-    Args:
-        segments (list): assigned segments
-
-    Returns:
-        str: HxNx, where x is either a subtype number, or x if not assigned
-    """
-    try:
-        ha = [x for x in segments if x.split("_")[1] == "HA"][0].split("_")[-1]
-    except:
-        ha = "Hx"
-    try:
-        na = [x for x in segments if x.split("_")[1] == "NA"][0].split("_")[-1]
-    except:
-        na = "Nx"
-    return f"{ha}{na}"
-
-
 def write_figuredata(data: FigureData, outfile: str):
     with open(outfile, "wb") as out:
         pickle.dump(data, out, pickle.HIGHEST_PROTOCOL)
@@ -58,9 +37,6 @@ def run_preprocessing(args):
         run.samtools_depth()
         segments, assignments = run.assign_reads()
 
-        # get subtype
-        subtype = get_subtype(segments)
-
         # check if assignment was unsuccessful
         if segments == None and assignments == None:
             continue  # skip current sample
@@ -70,7 +46,7 @@ def run_preprocessing(args):
         data.append_depth(s.samplename, s.samdepth, segments)
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
-        data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
+        data.append_table_data(s.samplename, s.paf, s.fastq)
     write_figuredata(data, os.path.join(args.outdir, "dashboard_data.pkl"))
 
 

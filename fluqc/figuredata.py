@@ -128,7 +128,6 @@ class FigureData:
         # create table data
         self.table: dict[str, list] = {
             "Sample": [],
-            "Subtype": [],
             "reads": [],
             "bases": [],
             "% mapped": [],
@@ -165,7 +164,7 @@ class FigureData:
                 self.len_qual["quality"].append(avgq)
 
     def append_table_data(
-        self, samplename: str, paf_path: str, subtype: str, fastq_path: str
+        self, samplename: str, paf_path: str, fastq_path: str
     ) -> None:
         """Append general statistics to dict for a sample for dashboard datatable
 
@@ -181,7 +180,6 @@ class FigureData:
         mapped_reads = len(paf["q_name"].unique())
         perc_mapped = round(((mapped_reads / stats.nreads) * 100), 1)
         self.table["Sample"].append(samplename)
-        self.table["Subtype"].append(subtype)
         self.table["reads"].append(stats.nreads)
         self.table["bases"].append(stats.nbases)
         self.table["% mapped"].append(perc_mapped)
