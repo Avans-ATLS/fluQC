@@ -149,6 +149,7 @@ class Plots:
                 xaxis_title="Position",
                 yaxis_title="Read depth",
                 template=self.template,
+                showlegend=False,
             )
             d[s] = fig
 
