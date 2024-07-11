@@ -1,12 +1,8 @@
-import logging
-from functools import partial
-from dash import Dash, html, dcc, callback, Output, Input
 import plotly.express as px
 from plotly.graph_objects import Figure
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pandas import DataFrame
-import numpy as np
 
 from fluqc.figuredata import FigureData
 

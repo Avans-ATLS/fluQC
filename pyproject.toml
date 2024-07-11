@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "FluQC"
+version = "0.1.0"
+description = "Visualize IAV sequencing data in an interactive dashboard"
+authors = ["Sander Boden <s.boden1@avans.nl>"]
+license = "MIT"
+readme = "README.md"
+
+include = [
+    "config/logging_config.yml",
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+PyYAML = "6.0.1"
+biopython = "1.83"
+pandas = "2.2.1"
+numpy = "1.26.4"
+plotly = "5.19.0"
+dash = "2.16.0"
+dash-bootstrap-components = "1.6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+FluQC = "fluqc.cli:main"
+
+[tool.poetry.urls]
+Repository = "https://github.com/Avans-ATLS/FluQC"
+Issues = "https://github.com/Avans-ATLS/FluQC/issues"
+Documentation = "https://github.com/Avans-ATLS/FluQC/blob/main/README.md"
+Avans-ATLS = "https://www.avans.nl/onderzoek/expertisecentra/perspectief-in-gezondheid/lectoraten/analysetechnieken-in-de-life-sciences"

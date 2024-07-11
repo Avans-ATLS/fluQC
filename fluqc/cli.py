@@ -1,13 +1,14 @@
-import argparse
-import glob
 import os
-import logging.config
-import yaml
+import glob
 import pickle
+import argparse
+import logging.config
 
+import yaml
+
+from fluqc.wrappers import Wrappers
 from fluqc.figuredata import FigureData
 from fluqc.samplepaths import SamplePaths
-from fluqc.wrappers import Wrappers
 from fluqc.dashboard.layout import launch_dashboard
 
 
@@ -17,6 +18,7 @@ def write_figuredata(data: FigureData, outfile: str):
 
 
 def run_preprocessing(args):
+    logger = logging.getLogger("FluQC")
     # init SamplePaths classes for each fastq file
     samples = [
         SamplePaths(x, args.database, args.outdir)
@@ -56,12 +58,12 @@ def dashboard(args):
     launch_dashboard(data)
 
 
-if __name__ == "__main__":
-    with open("config/logging_config.yml", "rt") as f:
+def main():
+    cfg = os.path.join(os.path.dirname(__file__), 'config/logging_config.yml')
+    with open(cfg, "rt") as f:
         config = yaml.safe_load(f.read())
     logging.config.dictConfig(config)
 
-    logger = logging.getLogger("FluQC")
     root_parser = argparse.ArgumentParser(
         "FluQC",
         description="Launch a QC dashboard for an influenza sequencing run",

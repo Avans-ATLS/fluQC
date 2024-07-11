@@ -3,16 +3,11 @@ import logging
 import subprocess
 import multiprocessing
 from logging import Logger
-from typing import Generator
 from functools import partial
-from itertools import product
-from collections import Counter
 
 import pandas as pd
 from Bio import SeqIO
 from pandas import DataFrame
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import RobustScaler
 
 from fluqc.samplepaths import SamplePaths
 
@@ -113,6 +108,7 @@ class Wrappers:
             df["n_match"] = df["n_match"].astype(int)
             df["t_len"] = df["t_len"].astype(int)
             df["aln_len"] = df["aln_len"].astype(int)
+            self.l.info("Writing paf output to file")
             df.to_csv(self.p.paf, sep="\t", index=False)
 
     def samtools_cov(self) -> None:

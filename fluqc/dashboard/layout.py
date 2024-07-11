@@ -1,11 +1,8 @@
 import logging
-from functools import partial
 
-from dash import Dash, html, dcc, callback, Output, Input, dash_table
+from dash import Dash, html, dcc, callback, Output, Input
 import dash_bootstrap_components as dbc
-import plotly.express as px
-from plotly.graph_objects import Figure, Scatter
-import plotly.graph_objects as go
+from plotly.graph_objects import Figure
 import pandas as pd
 from pandas import DataFrame
 

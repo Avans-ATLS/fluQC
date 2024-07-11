@@ -1,9 +1,3 @@
 *__pycache__*
 db/
-testrun/
-avans_data/
-datasets/
-test/
-testdata/
-*.log
 tmp*
