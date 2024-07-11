@@ -1,6 +1,6 @@
-import logging
 from logging import Logger
 import io
+import logging
 import multiprocessing as mp
 
 import pandas as pd
@@ -8,7 +8,6 @@ import numpy as np
 from Bio import SeqIO
 
 pd.options.mode.copy_on_write = True
-
 
 class FastqStats:
     """Read statistics from a fastq file"""
@@ -81,7 +80,6 @@ class FastqStats:
             # Check if cumulative sum exceeds half of the total bases
             if cumulative_sum >= total_bases / 2:
                 return length
-
 
 class FigureData:
     """Compute and combine results for visualization"""
