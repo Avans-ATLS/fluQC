@@ -19,38 +19,6 @@ from fluqc.samplepaths import SamplePaths
 pd.options.mode.copy_on_write = True
 
 
-def kmerfreqs(fastq: str, outfile: str, k: int = 5) -> None:
-    def sliding_window(s: str) -> Generator[str, None, None]:
-        for i in range(0, len(s) - k + 1):
-            yield s[i : i + k]
-
-    # set up list of unique kmers that will be counted
-    kmers = ["".join(x) for x in product("ATCG", repeat=k)]
-
-    with open(outfile, "w") as out:
-        header = "read,"
-        header += ",".join(kmers)
-        out.write(header + "\n")
-        with open(fastq) as fq:
-            for record in SeqIO.parse(fq, "fastq"):
-                # create dict of kmerfrequences, set all values to 0
-                freq = {k: 0 for k in kmers}
-                # count each kmer occurrence
-                kmer_counts = Counter(sliding_window(record.seq))
-                freq.update(kmer_counts)
-                out.write(f'{record.id},{",".join([str(x) for x in freq.values()])}\n')
-
-
-def kmerPCA(kmerfreqs: str) -> pd.DataFrame:
-    df = pd.read_csv(kmerfreqs, header=0, index_col=0)
-    scaler = RobustScaler()
-    pca = PCA(n_components=10)
-    return pd.DataFrame(
-        pca.fit_transform(scaler.fit_transform(df)),
-        index=df.index,
-        columns=[f"PC{x+1}" for x in range(10)],
-    )
-
 
 class Wrappers:
     """Collection of CommandLine wrappers"""

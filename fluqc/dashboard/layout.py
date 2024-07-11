@@ -107,7 +107,6 @@ def launch_dashboard(data: FigureData) -> None:
                         "In-depth Sample view", href="/page-sample", active="exact"
                     ),
                     dbc.NavLink("DIP's", href="/page-dip", active="exact"),
-                    dbc.NavLink("Kmer Analysis", href="/page-kmer", active="exact"),
                 ],
                 vertical=True,
                 pills=True,
@@ -186,18 +185,6 @@ def launch_dashboard(data: FigureData) -> None:
         ],
         style=CONTENT,
     )
-    KMER_PAGE = html.Div(
-        [
-            html.H1("Read Kmerfrequency Analysis"),
-            html.Br(),
-            dcc.Markdown(t.kmer_frequency),
-            html.Br(),
-            html.H5("3D PCA of Kmerfrequecies"),
-            html.Br(),
-            dcc.Graph(figure=p.kmer),
-        ],
-        style=CONTENT,
-    )
 
     content = html.Div(id="page-content")
     app.layout = html.Div(  # new version
@@ -221,8 +208,6 @@ def launch_dashboard(data: FigureData) -> None:
             return SAMPLE_PAGE
         elif pathname == "/page-dip":
             return DIP_PAGE
-        elif pathname == "/page-kmer":
-            return KMER_PAGE
         else:
             return html.Div(
                 [

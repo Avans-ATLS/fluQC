@@ -60,8 +60,3 @@ Choose from one of the following statistics to see the results in the heatmap:
 **meanbaseq**: The average quality of reads covering the segment.
 **meanmapq**: The average mapping quality of all mapped reads.
 """
-    kmer_frequency: str = """
-The 3d Kmer frequency plot below is obtained by counting the number of kmer occurrences of k=5 in each read. 
-Next, the kmer frequencies are scaled and PCA is performed to reduce the dimensionality to n=10.   
-The first three principal components of the kmerfrequencies are shown, and the reads are colored according to the segment it was mapped to.  
-"""

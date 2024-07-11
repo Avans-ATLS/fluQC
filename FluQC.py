@@ -7,7 +7,7 @@ import pickle
 
 from fluqc.figuredata import FigureData
 from fluqc.samplepaths import SamplePaths
-from fluqc.wrappers import Wrappers, kmerfreqs, kmerPCA
+from fluqc.wrappers import Wrappers
 from fluqc.dashboard.layout import launch_dashboard
 
 
@@ -71,10 +71,6 @@ def run_preprocessing(args):
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
         data.append_table_data(s.samplename, s.paf, subtype, s.fastq)
-        logger.info("Generating Kmerfrequencies")
-        kmerfreqs(s.fastq, s.kmerfreqs, k=5)
-        kmerdf = kmerPCA(s.kmerfreqs)
-        data.prepare_kmer_data(kmerdf, assignments)
     write_figuredata(data, os.path.join(args.outdir, "dashboard_data.pkl"))
 
 

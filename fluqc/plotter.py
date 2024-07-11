@@ -23,7 +23,7 @@ class Plots:
     def __init__(self, data: FigureData):
         self.d = data
         self.dip: Figure = self.dip_heatmap()
-        self.kmer: Figure = self.kmerfreq_PCA()
+        # self.kmer: Figure = self.kmerfreq_PCA()
         self.cov: dict[str, Figure] = self.covstats()
         self.depth: dict[str, Figure] = self.cov_histogram()
         self.lengths: dict[str, Figure] = self.readlengths()
