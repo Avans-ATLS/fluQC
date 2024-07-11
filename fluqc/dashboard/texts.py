@@ -56,7 +56,7 @@ Choose from one of the following statistics to see the results in the heatmap:
 **numreads**: The number of reads mapped against each segment.  
 **covbases**: The number of bases contained within the mapped reads per segment.  
 **coverage**: The percentage of each segment covered by reads. (percentage of reference segment length)  
-**meandepth**: The average number of reads covering each base in the segment.
-**meanbaseq**: The average quality of reads covering the segment.
-**meanmapq**: The average mapping quality of all mapped reads.
+**meandepth**: The average number of reads covering each base in the segment.  
+**meanbaseq**: The average quality of reads covering the segment.  
+**meanmapq**: The average mapping quality of all mapped reads.  
 """
