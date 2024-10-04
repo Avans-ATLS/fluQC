@@ -7,7 +7,7 @@ import logging.config
 import yaml
 
 from fluqc.wrappers import Wrappers
-from fluqc.figuredata import FigureData
+from fluqc.figuredata import FigureData, FastqStats
 from fluqc.samplepaths import SamplePaths
 from fluqc.dashboard.layout import launch_dashboard
 
@@ -31,6 +31,13 @@ def run_preprocessing(args):
 
     # analyze each dataset and collect results
     for s in samples:
+        logger.info(f"Analyzing {s.samplename}")
+        # check if sample has > 10k reads.
+        if FastqStats(s.fastq).nreads > 10000:
+            logger.info(f"{s.samplename} has > 10k reads")
+            # subsample to 10k reads
+            s.subsample_fastq(10000)
+
         # init Wrappers class for sample
         run = Wrappers(s, args.threads)
         # run analyses

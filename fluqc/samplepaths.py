@@ -1,5 +1,6 @@
 import os
 import logging
+import subprocess
 from logging import Logger
 
 
@@ -13,6 +14,18 @@ class SamplePaths:
         if not os.path.isdir(self.outdir):
             os.makedirs(self.outdir)
             self.l.debug(f"Created output directory: {self.outdir}")
+
+    def subsample_fastq(self, nreads: int) -> None:
+        """Subsample fastq file to nreads
+
+        Args:
+            nreads (int): Number of reads to subsample
+        """
+        self.l.info(f"Subsampling {self.samplename} to {nreads} reads")
+        fastq = os.path.join(self.outdir, f"{self.samplename}_subsampled.fastq")
+        cmd = f"seqtk sample {self.fastq} {nreads} > {fastq}"
+        subprocess.run(cmd, shell=True)
+        self.fastq = fastq
 
     def __init__(self, fastq: str, db: str, outdir: str):
         """Assign pathdata to class variables, create output directories
