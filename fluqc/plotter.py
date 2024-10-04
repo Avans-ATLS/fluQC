@@ -143,7 +143,7 @@ class Plots:
             fig.update_layout(
                 title=f"Segment coverage: {s}",
                 xaxis_title="Position",
-                yaxis_title="Read depth",
+                yaxis_title="Read depth (log10)",
                 template=self.template,
                 showlegend=False,
             )
@@ -182,7 +182,7 @@ class Plots:
             fig.update_layout(
                 title=f"Segment depth: {s}",
                 xaxis_title="Position",
-                yaxis_title="Read depth (log10)",
+                yaxis_title="Read length",
                 template=self.template,
             )
             d[s] = fig
