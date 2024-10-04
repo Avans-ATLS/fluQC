@@ -184,7 +184,7 @@ class FigureData:
         self.table["avg length"].append(stats.length)
         self.table["read N50"].append(stats.N50)
         self.table["avg quality"].append(stats.qual)
-        self.table['minimum depth'].append(depth["depth"].rolling(window=15).mean().min())
+        self.table['minimum depth'].append(round(depth["depth"].rolling(window=15).mean().min(), 0))
 
     def append_percent_dips(
         self, samplename: str, paf_path: str, segments: list[str]
