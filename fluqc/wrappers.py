@@ -36,15 +36,7 @@ class Wrappers:
         Args:
             threads (int): Number of threads to use in minimap2
         """
-        # read filtering
-        # nanofilt = f'NanoFilt -l 400 -q 8 {self.p.fastq}'
-        # filt = subprocess.Popen(
-        #     nanofilt,
-        #     stdout=subprocess.PIPE,
-        #     stderr=subprocess.PIPE,
-        #     shell=True,
-        # )
-        # run minimap2
+        # run minimap
         minimap = f"minimap2 -ax map-ont -t {self.t} {self.p.db} {self.p.fastq}"
         self.l.info(f"Running minimap for read classification")
         map = subprocess.Popen(

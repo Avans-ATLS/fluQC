@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "FluQC"
-version = "0.1.0"
+version = "0.2.0"
 description = "Visualize IAV sequencing data in an interactive dashboard"
 authors = ["Sander Boden <s.boden1@avans.nl>"]
 license = "MIT"
