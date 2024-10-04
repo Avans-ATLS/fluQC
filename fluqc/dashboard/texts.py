@@ -27,10 +27,7 @@ part of [Centre of Expertise Perspective in Health](https://www.avans.nl/onderzo
     table_text: str = """
 ## Summary Table
 The table below summarizes general statistics of the fastq data given to the dashboard.
-The subtype is inferred from the HA/NA reference segments which most reads mapped against. 
-An x in the subtype indicates this segment was not sequenced well enough to determine it's subtype. 
-For example, a subytpe of HxN1 indicates that the HA segment was not present in the data and thus, the subtype could not be determined. 
-
+The minimum depth is the lowest average depth over a 15bp window across the genome.
 """
 
     dip_explanation: str = """

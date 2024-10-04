@@ -130,6 +130,7 @@ class FigureData:
             "avg length": [],
             "read N50": [],
             "avg quality": [],
+            "minimum depth": [],
         }
         self.len_qual: dict[str, list] = {
             "Sample": [],
@@ -160,7 +161,7 @@ class FigureData:
                 self.len_qual["quality"].append(avgq)
 
     def append_table_data(
-        self, samplename: str, paf_path: str, fastq_path: str
+        self, samplename: str, paf_path: str, fastq_path: str, depth_path: str
     ) -> None:
         """Append general statistics to dict for a sample for dashboard datatable
 
@@ -172,7 +173,8 @@ class FigureData:
         """
         paf = pd.read_csv(paf_path, sep="\t")
         stats = FastqStats(fastq_path)
-
+        depth = pd.read_csv(depth_path, sep="\t")
+        
         mapped_reads = len(paf["q_name"].unique())
         perc_mapped = round(((mapped_reads / stats.nreads) * 100), 1)
         self.table["Sample"].append(samplename)
@@ -182,6 +184,8 @@ class FigureData:
         self.table["avg length"].append(stats.length)
         self.table["read N50"].append(stats.N50)
         self.table["avg quality"].append(stats.qual)
+        self.table['minimum depth'].append(depth["depth"].rolling(window=15).mean().min())
+        print(self.table)
 
     def append_percent_dips(
         self, samplename: str, paf_path: str, segments: list[str]

@@ -48,7 +48,7 @@ def run_preprocessing(args):
         data.append_depth(s.samplename, s.samdepth, segments)
         data.append_segment_readlengths(s.samplename, s.fastq, assignments)
         data.append_len_qual(s.samplename, s.fastq)
-        data.append_table_data(s.samplename, s.paf, s.fastq)
+        data.append_table_data(s.samplename, s.paf, s.fastq, s.samdepth)
     write_figuredata(data, os.path.join(args.outdir, "dashboard_data.pkl"))
 
 
@@ -93,3 +93,8 @@ def main():
 
     args = root_parser.parse_args()
     args.func(args)
+
+
+
+if __name__ == "__main__":
+    main()
