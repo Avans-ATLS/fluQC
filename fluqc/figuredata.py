@@ -54,7 +54,7 @@ class FastqStats:
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
                 total_qual += sum(
-                    [x - 15 for x in record.letter_annotations["phred_quality"]]
+                    [x for x in record.letter_annotations["phred_quality"]]
                 )  # conversion for nanopore data
         return round(total_qual / self.nbases, 1)
 
@@ -152,7 +152,7 @@ class FigureData:
                 avgq = round(
                     number=(
                         sum(
-                            [x - 15 for x in record.letter_annotations["phred_quality"]]
+                            [x for x in record.letter_annotations["phred_quality"]]
                         )
                         / len(record.seq)
                     ),
