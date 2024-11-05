@@ -185,6 +185,7 @@ class Plots:
                 yaxis_title="Read length",
                 template=self.template,
             )
+            fig.update_yaxes(range=[0, max(self.segment_lengths.values()) + 2000])
             d[s] = fig
 
         return d
