@@ -162,7 +162,7 @@ def launch_dashboard(data: FigureData) -> None:
             html.H5("Read length v.s average quality"),
             dcc.Graph(id="bivariate"),
             html.Br(),
-            html.H5("Read lenghts per sample"),
+            html.H5("Read lengths per sample"),
             dcc.Graph(id="lengths"),
             html.Br(),
             html.H5("Read depth histogram"),
