@@ -94,7 +94,7 @@ def main():
     dash_parser.add_argument(
         "datapath",
         type=str,
-        help="path to directory containing data csv's. (outdir from preprocess subcommand)",
+        help="path to dashbaord data file (output from preprocess)",
     )
     dash_parser.set_defaults(func=dashboard)
 
