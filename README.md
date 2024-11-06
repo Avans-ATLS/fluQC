@@ -33,7 +33,10 @@ conda env create -n fluqc -f fluQC/env.yaml
 Then, activate the environment and install miniflu from the wheel in `dist/`.
 ```bash
 conda activate fluqc
-pip install fluQC/dist/fluqc-0.2.0-py3-none-any.whl
+python -m pip install fluQC/dist/fluqc-0.2.1-py3-none-any.whl
+
+# Editable installation (for devs)
+python -m pip install -e fluQC/
 ```
 
 
