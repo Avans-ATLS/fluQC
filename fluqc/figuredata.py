@@ -163,6 +163,19 @@ class FigureData:
     def append_table_data(
         self, samplename: str, paf_path: str, fastq_path: str, depth_path: str
     ) -> None:
+        def filter_depth(depth_df: pd.DataFrame) -> pd.DataFrame:
+            """Filter depth dataframe to retain only positions with depth > 40
+
+            Args:
+                depth_df (pd.DataFrame): dataframe with depth data
+
+            Returns:
+                pd.DataFrame: filtered dataframe
+            """
+            # Identify seqids that have at least one depth > 40
+            valid_seqids = depth_df.groupby('segment')['depth'].max().gt(40)
+            # Filter dataframe to retain only valid seqids
+            return depth_df[depth_df['segment'].isin(valid_seqids[valid_seqids].index)]
         """Append general statistics to dict for a sample for dashboard datatable
 
         Args:
@@ -184,7 +197,7 @@ class FigureData:
         self.table["avg length"].append(stats.length)
         self.table["read N50"].append(stats.N50)
         self.table["avg quality"].append(stats.qual)
-        self.table['minimum depth'].append(round(depth["depth"].rolling(window=15).mean().min(), 0))
+        self.table['minimum depth'].append(round(filter_depth(depth)['depth'].rolling(window=15).mean().min(), 0))
 
     def append_percent_dips(
         self, samplename: str, paf_path: str, segments: list[str]
