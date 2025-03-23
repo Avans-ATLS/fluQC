@@ -34,7 +34,6 @@ class Plots:
             Figure: DIP heatmap figure
         """
         df = DataFrame(self.d.dips).set_index("Sample")
-        print(df.head())
         # df["Segment"] = pd.Categorical(df["Segment"], categories=self.segment_order, ordered=True)
         df = df.transpose()
         df = df.reindex(self.segment_order)
