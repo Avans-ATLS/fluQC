@@ -33,10 +33,10 @@ def run_preprocessing(args):
     for s in samples:
         logger.info(f"Analyzing {s.samplename}")
         # check if sample has > 10k reads.
-        if FastqStats(s.fastq).nreads > 10000:
-            logger.info(f"{s.samplename} has > 10k reads")
+        if FastqStats(s.fastq).nreads > args.sample and not args.sample == 0:
+            logger.info(f"{s.samplename} has > {args.sample} reads")
             # subsample to 10k reads
-            s.subsample_fastq(10000)
+            s.subsample_fastq(args.sample)
 
         # init Wrappers class for sample
         run = Wrappers(s, args.threads)
@@ -88,6 +88,12 @@ def main():
         "outdir", type=str, help="Path to directory to place output"
     )
     prep_parser.add_argument("--threads", type=int, default=2, help="Number of threads")
+    prep_parser.add_argument(
+        "--sample",
+        type=int,
+        default=0,
+        help="Subsample to n reads if sample has more than this number of reads, 0 for no subsampling",
+    )
     prep_parser.set_defaults(func=run_preprocessing)
 
     dash_parser = subparsers.add_parser("dashboard", help="Launch dashboard")
