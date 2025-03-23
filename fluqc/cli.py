@@ -22,7 +22,7 @@ def run_preprocessing(args):
     # init SamplePaths classes for each fastq file
     samples = [
         SamplePaths(x, args.database, args.outdir)
-        for x in glob.glob(os.path.join(args.fastq, "*.fastq"))
+        for x in sorted(glob.glob(os.path.join(args.fastq, "*.fastq")))
     ]
     logger.info(f"Starting analysis for {len(samples)} samples in {args.fastq}")
 
