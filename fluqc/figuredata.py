@@ -7,6 +7,7 @@ from Bio import SeqIO
 
 pd.options.mode.copy_on_write = True
 
+
 class FastqStats:
     """Read statistics from a fastq file"""
 
@@ -78,6 +79,7 @@ class FastqStats:
             # Check if cumulative sum exceeds half of the total bases
             if cumulative_sum >= total_bases / 2:
                 return length
+
 
 class FigureData:
     """Compute and combine results for visualization"""
@@ -151,9 +153,7 @@ class FigureData:
                 self.len_qual["length"].append(len(record.seq))
                 avgq = round(
                     number=(
-                        sum(
-                            [x for x in record.letter_annotations["phred_quality"]]
-                        )
+                        sum([x for x in record.letter_annotations["phred_quality"]])
                         / len(record.seq)
                     ),
                     ndigits=1,
@@ -173,9 +173,10 @@ class FigureData:
                 pd.DataFrame: filtered dataframe
             """
             # Identify seqids that have at least one depth > 40
-            valid_seqids = depth_df.groupby('segment')['depth'].max().gt(40)
+            valid_seqids = depth_df.groupby("segment")["depth"].max().gt(40)
             # Filter dataframe to retain only valid seqids
-            return depth_df[depth_df['segment'].isin(valid_seqids[valid_seqids].index)]
+            return depth_df[depth_df["segment"].isin(valid_seqids[valid_seqids].index)]
+
         """Append general statistics to dict for a sample for dashboard datatable
 
         Args:
@@ -187,7 +188,7 @@ class FigureData:
         paf = pd.read_csv(paf_path, sep="\t")
         stats = FastqStats(fastq_path)
         depth = pd.read_csv(depth_path, sep="\t")
-        
+
         mapped_reads = len(paf["q_name"].unique())
         perc_mapped = round(((mapped_reads / stats.nreads) * 100), 1)
         self.table["Sample"].append(samplename)
@@ -197,7 +198,9 @@ class FigureData:
         self.table["avg length"].append(stats.length)
         self.table["read N50"].append(stats.N50)
         self.table["avg quality"].append(stats.qual)
-        self.table['minimum depth'].append(round(filter_depth(depth)['depth'].rolling(window=15).mean().min(), 0))
+        self.table["minimum depth"].append(
+            round(filter_depth(depth)["depth"].rolling(window=15).mean().min(), 0)
+        )
 
     def append_percent_dips(
         self, samplename: str, paf_path: str, segments: list[str]

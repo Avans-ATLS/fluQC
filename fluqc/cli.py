@@ -66,7 +66,7 @@ def dashboard(args):
 
 
 def main():
-    cfg = os.path.join(os.path.dirname(__file__), 'config/logging_config.yml')
+    cfg = os.path.join(os.path.dirname(__file__), "config/logging_config.yml")
     with open(cfg, "rt") as f:
         config = yaml.safe_load(f.read())
     logging.config.dictConfig(config)
@@ -106,7 +106,6 @@ def main():
 
     args = root_parser.parse_args()
     args.func(args)
-
 
 
 if __name__ == "__main__":

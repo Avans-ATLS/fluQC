@@ -14,7 +14,6 @@ from fluqc.samplepaths import SamplePaths
 pd.options.mode.copy_on_write = True
 
 
-
 class Wrappers:
     """Collection of CommandLine wrappers"""
 

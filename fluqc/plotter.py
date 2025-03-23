@@ -78,7 +78,9 @@ class Plots:
             dict[str, Figure]: statistic: heatmap figure
         """
         df = DataFrame(self.d.covstats)
-        df["Segment"] = pd.Categorical(df["Segment"], categories=self.segment_order, ordered=True)
+        df["Segment"] = pd.Categorical(
+            df["Segment"], categories=self.segment_order, ordered=True
+        )
         callback_options = df.columns[2:]
 
         # init dict to map figures to options
@@ -107,7 +109,6 @@ class Plots:
             dict[str, Figure]: samplename: coverage histogram
         """
         df = DataFrame(self.d.depth)
-        
 
         # init dict to map figures to samples
         d = {}
@@ -115,7 +116,9 @@ class Plots:
         for s in df["Sample"].unique():
             subdf = df[df["Sample"] == s]
             available_segments = subdf["Segment"].unique()
-            sorted_segments = [seg for seg in self.segment_order if seg in available_segments]
+            sorted_segments = [
+                seg for seg in self.segment_order if seg in available_segments
+            ]
             fig = make_subplots(
                 rows=1,
                 cols=len(df["Segment"].unique()),
@@ -173,8 +176,12 @@ class Plots:
         for s in df["Sample"].unique():
             subdf = df[df["Sample"] == s]
             available_segments = df["Segment"].unique()
-            sorted_segments = [seg for seg in self.segment_order if seg in available_segments]  
-            subdf["Segment"] = pd.Categorical(subdf["Segment"], categories=self.segment_order, ordered=True)
+            sorted_segments = [
+                seg for seg in self.segment_order if seg in available_segments
+            ]
+            subdf["Segment"] = pd.Categorical(
+                subdf["Segment"], categories=self.segment_order, ordered=True
+            )
             fig = px.violin(
                 subdf,
                 x="Segment",
