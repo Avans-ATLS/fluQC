@@ -3,6 +3,7 @@ from plotly.graph_objects import Figure
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pandas import DataFrame
+import pandas as pd
 
 from fluqc.figuredata import FigureData
 
@@ -13,6 +14,7 @@ class Plots:
     segment_lengths = dict(
         HA=1700, NA=1413, PB1=2274, PB2=2280, MP=982, NP=1497, PA=2151, NS=863
     )
+    segment_order = ["PB2", "PB1", "PA", "HA", "NP", "NA", "MP", "NS"]
     template = "plotly"
     marker_color = Figure().layout["template"]["layout"]["colorway"][3]
 
@@ -101,24 +103,26 @@ class Plots:
             dict[str, Figure]: samplename: coverage histogram
         """
         df = DataFrame(self.d.depth)
+        
 
         # init dict to map figures to samples
         d = {}
         # create figure per sample and add to dict
         for s in df["Sample"].unique():
             subdf = df[df["Sample"] == s]
-
+            available_segments = subdf["Segment"].unique()
+            sorted_segments = [seg for seg in self.segment_order if seg in available_segments]
             fig = make_subplots(
                 rows=1,
                 cols=len(df["Segment"].unique()),
-                subplot_titles=sorted(subdf["Segment"].unique()),
+                subplot_titles=sorted_segments,
                 shared_xaxes=True,
                 shared_yaxes=True,
                 vertical_spacing=0,
                 horizontal_spacing=0.01,
             )
 
-            for i, segment in enumerate(sorted(subdf["Segment"].unique()), start=1):
+            for i, segment in enumerate(sorted_segments, start=1):
                 segdf = subdf[subdf["Segment"] == segment]
                 segdf["position"] = segdf["Position"].astype(int)
                 segdf["RollingAvg"] = segdf["RollingAvg"].astype(float)
@@ -164,10 +168,14 @@ class Plots:
         # create figure per sample and add to dict
         for s in df["Sample"].unique():
             subdf = df[df["Sample"] == s]
+            available_segments = df["Segment"].unique()
+            sorted_segments = [seg for seg in self.segment_order if seg in available_segments]  
+            subdf["Segment"] = pd.Categorical(subdf["Segment"], categories=self.segment_order, ordered=True)
             fig = px.violin(
                 subdf,
                 x="Segment",
                 y="ReadLength",
+                category_orders={"Segment": sorted_segments},
             )
             fig.update_traces(marker=dict(color=self.marker_color, size=3, opacity=0.8))
             fig.add_trace(
@@ -190,12 +198,13 @@ class Plots:
 
         return d
 
-    def kmerfreq_PCA(self):
-        return px.scatter_3d(
-            self.d.kmerfreq,
-            x="PC1",
-            y="PC2",
-            z="PC3",
-            color="mapped_to",
-            template=self.template,
-        )
+    ## Deprecated
+    # def kmerfreq_PCA(self):
+    #     return px.scatter_3d(
+    #         self.d.kmerfreq,
+    #         x="PC1",
+    #         y="PC2",
+    #         z="PC3",
+    #         color="mapped_to",
+    #         template=self.template,
+    #     )
