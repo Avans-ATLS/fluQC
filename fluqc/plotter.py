@@ -34,7 +34,10 @@ class Plots:
             Figure: DIP heatmap figure
         """
         df = DataFrame(self.d.dips).set_index("Sample")
+        print(df.head())
+        # df["Segment"] = pd.Categorical(df["Segment"], categories=self.segment_order, ordered=True)
         df = df.transpose()
+        df = df.reindex(self.segment_order)
         for col in df.columns:
             df[col] = df[col].astype(float)
         fig = px.imshow(df, text_auto=True)
@@ -76,6 +79,7 @@ class Plots:
             dict[str, Figure]: statistic: heatmap figure
         """
         df = DataFrame(self.d.covstats)
+        df["Segment"] = pd.Categorical(df["Segment"], categories=self.segment_order, ordered=True)
         callback_options = df.columns[2:]
 
         # init dict to map figures to options
@@ -85,6 +89,7 @@ class Plots:
             subdf = df[["Sample", "Segment", opt]]
             subdf[opt] = subdf[opt].astype(float)
             subdf = subdf.pivot(index="Segment", columns="Sample", values=opt)
+            subdf = subdf.reindex(self.segment_order)
             fig = px.imshow(subdf, text_auto=True)
             fig.update_layout(
                 title=f"Heatmap of: {opt}",
