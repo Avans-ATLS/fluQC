@@ -11,9 +11,9 @@ A summary table showing general statistics and subtypes of each sample. \n
 Heatmap of mapping statistics per sample, per segment.  \n
 [In-depth Sample view](/page-sample):\n  
 Bivariate length v.s. quality figure, readlengths per segment and coverage histograms per sample. \n  
-[DIP's](/page-dip):\n  
+[DIPs](/page-dip):\n  
 A heatmap showing a (rather rudimentary) estimation of the percentage of Defective 
-Interfering Particles (DIP's) in the sample, per segment. \n
+Interfering Particles (DIPs) in the sample, per segment. \n
    
 ### Have some feedback?
 For problems, feedback and feature requests, please refer to the [github repo](https://github.com/AVANS-ALST/fluqc).  
