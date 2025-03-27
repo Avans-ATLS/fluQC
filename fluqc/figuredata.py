@@ -55,7 +55,7 @@ class FastqStats:
         with open(self.fq) as fq:
             for record in SeqIO.parse(fq, "fastq"):
                 total_qual += sum(
-                    [x for x in record.letter_annotations["phred_quality"]]
+                    [x - 5 for x in record.letter_annotations["phred_quality"]]
                 )  # conversion for nanopore data
         return round(total_qual / self.nbases, 1)
 
@@ -173,7 +173,7 @@ class FigureData:
                 pd.DataFrame: filtered dataframe
             """
             # Identify seqids that have at least one depth > 40
-            valid_seqids = depth_df.groupby("segment")["depth"].max().gt(40)
+            valid_seqids = depth_df.groupby("segment")["depth"].min().gt(40)
             # Filter dataframe to retain only valid seqids
             return depth_df[depth_df["segment"].isin(valid_seqids[valid_seqids].index)]
 
